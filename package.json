@@ -74,7 +74,7 @@
       "packagerConfig": {
         "name": "Electron starter",
         "executableName": "electron-starter",
-        "icon": "assets/icon",
+        "icon": "assets/icon.png",
         "extraResource": [
           "assets"
         ]

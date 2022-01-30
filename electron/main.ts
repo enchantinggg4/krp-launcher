@@ -1,8 +1,9 @@
-import {app, BrowserWindow, ipcMain} from 'electron'
+import {app, BrowserWindow, ipcMain, Menu, Tray} from 'electron'
 import UpdateManager from './Update.manager'
 import {ping} from "minecraft-server-ping";
 import LauncherManager from './Launcher.manager';
 import ConfigManager from './Config.manager';
+import  path from "path";
 
 export let mainWindow: BrowserWindow | null
 
@@ -13,6 +14,10 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 //   process.env.NODE_ENV === 'production'
 //     ? process.resourcesPath
 //     : app.getAppPath()
+
+let isQuiting: boolean = false;
+let tray;
+
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -29,9 +34,34 @@ function createWindow() {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
+  mainWindow.on('close', function (event) {
+    if (!isQuiting) {
+      event.preventDefault();
+      mainWindow?.hide();
+      event.returnValue = false;
+    }
+  });
+
+  // mainWindow.on('closed', () => {
+  //   mainWindow = null
+  // })
+
+  console.log(__dirname, "bebra")
+  tray = new Tray(path.join(__dirname, 'unnamed.png'));
+
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: 'Show App', click: function () {
+        mainWindow?.show();
+      }
+    },
+    {
+      label: 'Quit', click: function () {
+        isQuiting = true;
+        app.quit();
+      }
+    }
+  ]));
 }
 
 async function initStuff() {
@@ -71,6 +101,10 @@ app
   .then(registerListeners)
   .then(initStuff)
   .catch(e => console.error(e))
+
+app.on('before-quit', function () {
+  isQuiting = true;
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

@@ -55,8 +55,8 @@ class LayoutStore {
 
   }
 
-  async reinstallMods(){
-    window.Main.sendMessage({ type: 'reinstall' })
+  async launchGame(){
+    window.Main.sendMessage({ type: 'launch' })
   }
 
   onUpdateButton() {

@@ -108,7 +108,7 @@ const Layout = () => {
           onChange={e => LayoutStore.setUsername(e.target.value)}
           placeholder="Никнейм"
         />
-        <PlayButton disabled={!LayoutStore.updateStatus.updated} onClick={() => LayoutStore.ping()}>Играть</PlayButton>
+        <PlayButton disabled={!LayoutStore.updateStatus.updated} onClick={() => LayoutStore.launchGame()}>Играть</PlayButton>
         <OnlineStatus>
           Онлайн: {LayoutStore.onlineCount}/{LayoutStore.maxOnlineCount}
         </OnlineStatus>
