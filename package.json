@@ -10,7 +10,8 @@
     "make": "electron-forge make",
     "release": "electron-forge publish",
     "lint": "eslint . --ext js,ts",
-    "test": "jest"
+    "test": "jest",
+    "icons": "electron-icon-builder --input=assets/icon.png --output=./appicons"
   },
   "keywords": [],
   "license": "MIT",
@@ -52,6 +53,7 @@
     "copy-webpack-plugin": "^10.2.3",
     "cross-env": "7.0.3",
     "electron": "13.1.2",
+    "electron-icon-builder": "^2.0.1",
     "eslint": "7.29.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-config-standard": "16.0.3",
@@ -72,9 +74,9 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "Electron starter",
-        "executableName": "electron-starter",
-        "icon": "assets/icon.png",
+        "name": "KingdomRPG",
+        "executableName": "KingdomRPG",
+        "icon": "appicons/png/icon",
         "extraResource": [
           "assets"
         ]
@@ -104,7 +106,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "Electron Starter"
+            "name": "KingdomRPG"
           }
         },
         {
