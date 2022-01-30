@@ -1,6 +1,8 @@
 import {app, BrowserWindow, ipcMain} from 'electron'
 import UpdateManager from './Update.manager'
 import {ping} from "minecraft-server-ping";
+import LauncherManager from './Launcher.manager';
+import ConfigManager from './Config.manager';
 
 export let mainWindow: BrowserWindow | null
 
@@ -50,9 +52,15 @@ async function registerListeners() {
       evt.reply('online', {
         max: data.players.max,
         online: data.players.online,
-      })
+      });
     } else if (msg.type == 'reinstall') {
       await UpdateManager.cleanInstall()
+    } else if(msg.type == 'update_username'){
+      ConfigManager.setUsername(msg.username)
+    } else if(msg.type == 'init'){
+      ConfigManager.sendUpdate()
+    }else if(msg.type == 'launch'){
+      LauncherManager.launch(msg)
     }
   })
 }

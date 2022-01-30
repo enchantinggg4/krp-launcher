@@ -1,6 +1,11 @@
 import {makeAutoObservable, observable} from "mobx"
+import {Config} from "../../../electron/Config.manager";
 
 class LayoutStore {
+
+  @observable
+  username: string = ""
+
   @observable
   onlineCount: number = 0
 
@@ -22,6 +27,10 @@ class LayoutStore {
       this.maxOnlineCount = data.max
     })
 
+    window.Main.on('update_config', (data: Config) => {
+      this.username = data.username;
+    })
+
     window.Main.on('update_status', (data: any) => {
       this.updateStatus = data;
     })
@@ -30,12 +39,21 @@ class LayoutStore {
       this.ping()
     }, 10_000)
     this.ping()
+    window.Main.sendMessage({ type: 'init' })
   }
 
   async ping() {
     window.Main.sendMessage({ type: 'ping' })
   }
 
+  async setUsername(username: string){
+    this.username = username
+    window.Main.sendMessage({
+      type: 'update_username',
+      username
+    })
+
+  }
 
   async reinstallMods(){
     window.Main.sendMessage({ type: 'reinstall' })

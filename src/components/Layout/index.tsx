@@ -104,8 +104,8 @@ const Layout = () => {
       <MainContent></MainContent>
       <BottomRow>
         <Username
-          value={username}
-          onChange={e => setUsername(e.target.value)}
+          value={LayoutStore.username}
+          onChange={e => LayoutStore.setUsername(e.target.value)}
           placeholder="Никнейм"
         />
         <PlayButton disabled={!LayoutStore.updateStatus.updated} onClick={() => LayoutStore.ping()}>Играть</PlayButton>

@@ -17,7 +17,7 @@ class UpdateManager {
 
   constructor() {
     this.api = create({
-      baseURL: 'http://localhost:3300',
+      baseURL: 'http://5.101.50.157:3300',
     })
   }
 
