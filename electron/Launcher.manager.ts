@@ -52,7 +52,7 @@ class LauncherManager {
 
     const command = `${javaExecutableLocation} -XstartOnFirstThread ` +
       `-Djava.library.path=${escapePath(this.getNativesLocation())} -cp ${classPathNotation} ${mainClass} ` +
-      `--accessToken ${ConfigManager.config.username} --version 1.16.5 --assetsDir ${escapePath(this.getAssetsLocation())} --gameDir ${escapePath(UpdateManager.getMinecraftPath())} -assetIndex 1.16`
+      `--accessToken ${ConfigManager.config.username} --username ${ConfigManager.config.username} --version 1.16.5 --assetsDir ${escapePath(this.getAssetsLocation())} --gameDir ${escapePath(UpdateManager.getMinecraftPath())} -assetIndex 1.16`
     console.log(command)
     const child = exec(command, (error, stdout, stderr) => {
 

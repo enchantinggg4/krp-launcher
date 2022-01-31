@@ -39,8 +39,7 @@ function createWindow() {
 
 async function initStuff() {
   // TODO: check local file status
-  console.log('AppData:', UpdateManager.getMinecraftPath())
-  await UpdateManager.makeUpdate()
+  await UpdateManager.manageUpdates()
 }
 
 async function registerListeners() {

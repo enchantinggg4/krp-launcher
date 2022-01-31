@@ -6,6 +6,7 @@ import {PatchDTO, PatchesDTO} from './dto'
 import {ApisauceInstance, create} from 'apisauce'
 import {DownloaderHelper} from 'node-downloader-helper'
 import {mainWindow} from './main'
+import DecompressZip from 'decompress-zip';
 
 class UpdateManager {
   APPDATA_DIR = '.kingdomrpg'
@@ -14,10 +15,18 @@ class UpdateManager {
 
   updatesNeeded = 0
   updatesDone = 0
+  minecraftDownloaded = false
+
+  unzipStatus?: {
+    done: number
+    total: number
+    percentage: number
+  }
 
   constructor() {
     this.api = create({
       baseURL: 'http://5.101.50.157:3300',
+      // baseURL: 'http://localhost:3300',
     })
   }
 
@@ -28,6 +37,22 @@ class UpdateManager {
 
   public getModsPath() {
     return path.resolve(this.getMinecraftPath(), 'mods')
+  }
+
+  public isMinecraftZipDownloaded() {
+    return fs.existsSync(
+      path.join(this.getMinecraftPath(), '1.16.5-fabric.zip')
+    )
+  }
+
+  public isMinecraftInstalled() {
+    const shouldExist = ['libraries', 'natives', '1.16.5.jar', 'assets']
+    for (let filename of shouldExist) {
+      if (!fs.existsSync(path.join(this.getMinecraftPath(), filename)))
+        return false
+    }
+
+    return true
   }
 
   public getPatchState(): PatchesDTO {
@@ -52,6 +77,48 @@ class UpdateManager {
     }
   }
 
+  public async downloadMinecraftZip() {
+    const downloadUrl = 'http://5.101.50.157/1.16.5-fabric.zip'
+    const helper = new DownloaderHelper(downloadUrl, this.getMinecraftPath(), {
+      override: true,
+    })
+    helper.on('progress.throttled', data => {
+      mainWindow?.webContents.send('download_progress', data)
+      this.notifyUpdate()
+    })
+
+    await helper.start()
+    this.notifyUpdate()
+    mainWindow?.webContents.send('download_progress', null)
+  }
+
+  public async unpackMinecraft() {
+    return new Promise<void>((resolve, reject) => {
+      const unzipper = new DecompressZip(
+        path.join(this.getMinecraftPath(), '1.16.5-fabric.zip')
+      )
+      unzipper.extract({
+        path: path.join(this.getMinecraftPath()),
+      })
+
+      unzipper.on('error', function (err: any) {
+        reject()
+      })
+
+      unzipper.on('extract', function (log: any) {
+        mainWindow?.webContents.send('unzip_status', undefined)
+        resolve()
+      })
+
+      unzipper.on('progress', function (fileIndex: number, fileCount: number) {
+        mainWindow?.webContents.send('unzip_status', {
+          done: fileIndex + 1,
+          total: fileCount,
+          percentage: ((fileIndex + 1) / fileCount) * 100,
+        })
+      })
+    })
+  }
   /**
    * Return list of files to be downloaded from server
    */
@@ -71,8 +138,15 @@ class UpdateManager {
     this.updatesNeeded = diff.files.length
 
     const promises = diff.files.map(file => {
-      const downloadUrl = `${this.api.getBaseURL()}/static/${file.filename}`
-      return this.downloadModFile(file.filename, downloadUrl)
+      if (file.action == '+') {
+        const downloadUrl = `${this.api.getBaseURL()}/static/${file.filename}`
+        return this.downloadModFile(file.filename, downloadUrl)
+      } else if (file.action == '-') {
+        fs.unlinkSync(path.join(this.getModsPath(), file.filename))
+        return Promise.resolve()
+      }else {
+        console.log("UNKNOWN ACTION??", file)
+      }
     })
     await Promise.all(promises)
   }
@@ -88,11 +162,18 @@ class UpdateManager {
   }
 
   private notifyUpdate() {
+    console.log(
+      'Notify: What is this shit',
+      this.isMinecraftInstalled() &&
+        (this.updatesNeeded === 0 || this.updatesDone === this.updatesNeeded)
+    )
     mainWindow?.webContents.send('update_status', {
       updated:
-        this.updatesNeeded === 0 || this.updatesDone === this.updatesNeeded,
+        this.isMinecraftInstalled() &&
+        (this.updatesNeeded === 0 || this.updatesDone === this.updatesNeeded),
       totalUpdates: this.updatesNeeded,
       downloaded: this.updatesDone,
+      minecraftDownloaded: this.isMinecraftInstalled(),
     })
   }
 
@@ -107,6 +188,27 @@ class UpdateManager {
     })
 
     this.notifyUpdate()
+    await this.makeUpdate()
+  }
+
+  async manageUpdates() {
+    // Here we install minecraft if needed and updates
+    this.notifyUpdate()
+    console.log('HEHELHEEHLLELHEL???')
+
+    if (!this.isMinecraftZipDownloaded()) {
+      console.log('Start downloading zip...')
+      await this.downloadMinecraftZip()
+    } else {
+      console.log('Zip already downloaded')
+    }
+
+    if (!this.isMinecraftInstalled()) {
+      console.log('Start unpacking zip')
+      await this.unpackMinecraft()
+    } else {
+      console.log('Zip already unpacked!')
+    }
     await this.makeUpdate()
   }
 }

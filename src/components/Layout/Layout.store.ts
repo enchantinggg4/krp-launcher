@@ -1,5 +1,6 @@
 import {makeAutoObservable, observable} from "mobx"
 import {Config} from "../../../electron/Config.manager";
+import {Stats} from "node-downloader-helper";
 
 class LayoutStore {
 
@@ -17,7 +18,16 @@ class LayoutStore {
     updated: true,
     totalUpdates: 0,
     downloaded: 0,
+    minecraftDownloaded: false
   }
+
+  @observable
+  unzipStatus?: {
+    percentage: number
+  }
+
+  @observable
+  private downloadStatus?: Stats;
 
   constructor() {
     makeAutoObservable(this);
@@ -29,6 +39,15 @@ class LayoutStore {
 
     window.Main.on('update_config', (data: Config) => {
       this.username = data.username;
+    })
+
+    window.Main.on('download_progress', (data: Stats) => {
+      console.log('DownloadStatus received')
+      this.downloadStatus = data
+    })
+
+    window.Main.on('unzip_status', (data: any) => {
+      this.unzipStatus = data;
     })
 
     window.Main.on('update_status', (data: any) => {
@@ -62,6 +81,21 @@ class LayoutStore {
   onUpdateButton() {
     // check if we are up to date
     window.Main.sendMessage({ type: 'reinstall' })
+  }
+
+  getUpdateStatus() {
+    // console.log(this.updateStatus, this.downloadStatus)
+    if(this.updateStatus.updated){
+      return 'Установлена последняя версия!'
+    }else if(this.updateStatus.totalUpdates > 0){
+      return `Установка ${this.updateStatus.downloaded}/${this.updateStatus.totalUpdates}`
+    }else if(this.downloadStatus) {
+      return `Скачивание ${this.downloadStatus?.progress.toFixed(1)}%`
+    } else if(this.unzipStatus){
+      return `Разархивирование ${this.unzipStatus.percentage.toFixed(1)}%`
+    } else {
+      return '?'
+    }
   }
 }
 

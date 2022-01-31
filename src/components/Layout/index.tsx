@@ -114,9 +114,7 @@ const Layout = () => {
         </OnlineStatus>
         <Spacer />
         <UpdateStatus onClick={() => LayoutStore.onUpdateButton()}>
-          {LayoutStore.updateStatus.updated
-            ? 'Установлена последняя версия!'
-            : `Установка ${LayoutStore.updateStatus.downloaded}/${LayoutStore.updateStatus.totalUpdates}`}
+          {LayoutStore.getUpdateStatus()}
         </UpdateStatus>
       </BottomRow>
     </Container>
