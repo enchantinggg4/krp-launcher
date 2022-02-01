@@ -100,7 +100,7 @@ const Layout = () => {
   return (
     <Container>
       <BackgroundImage />
-      <Title>Ебал маму евгехи</Title>
+      <Title>Кингдом хуйсоси</Title>
       <MainContent></MainContent>
       <BottomRow>
         <Username
