@@ -100,7 +100,7 @@ const Layout = () => {
   return (
     <Container>
       <BackgroundImage />
-      <Title>Кингдом хуйсоси</Title>
+      <Title>Hello please update</Title>
       <MainContent></MainContent>
       <BottomRow>
         <Username

@@ -11,7 +11,6 @@ import UpdateManager from './Update.manager'
 import { ping } from 'minecraft-server-ping'
 import LauncherManager from './Launcher.manager'
 import ConfigManager from './Config.manager'
-require('update-electron-app')()
 const isDev = require('electron-is-dev')
 
 export let mainWindow: BrowserWindow | null
@@ -20,10 +19,11 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 if (!isDev) {
-  const server = 'http://5.101.50.157/nuts'
+  const server = 'https://krp-launcher-2.vercel.app'
   const url = `${server}/update/${process.platform}/${app.getVersion()}`
 
   autoUpdater.setFeedURL({ url })
+  autoUpdater.checkForUpdates();
 }
 
 function handleSquirrelEvent() {
