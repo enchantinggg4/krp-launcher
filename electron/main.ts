@@ -1,9 +1,9 @@
-import {app, BrowserWindow, ipcMain, Menu, Tray} from 'electron'
+import { app, BrowserWindow, ipcMain, autoUpdater, dialog, Menu, Tray } from 'electron'
 import UpdateManager from './Update.manager'
-import {ping} from "minecraft-server-ping";
-import LauncherManager from './Launcher.manager';
-import ConfigManager from './Config.manager';
-import  path from "path";
+import { ping } from 'minecraft-server-ping'
+import LauncherManager from './Launcher.manager'
+import ConfigManager from './Config.manager'
+require('update-electron-app')()
 
 export let mainWindow: BrowserWindow | null
 
@@ -15,37 +15,36 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 //     ? process.resourcesPath
 //     : app.getAppPath()
 
-
 // this should be placed at top of main.js to handle setup events quickly
 
 function handleSquirrelEvent() {
   if (process.argv.length === 1) {
-    return false;
+    return false
   }
 
-  const ChildProcess = require('child_process');
-  const path = require('path');
+  const ChildProcess = require('child_process')
+  const path = require('path')
 
-  const appFolder = path.resolve(process.execPath, '..');
-  const rootAtomFolder = path.resolve(appFolder, '..');
-  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
-  const exeName = path.basename(process.execPath);
+  const appFolder = path.resolve(process.execPath, '..')
+  const rootAtomFolder = path.resolve(appFolder, '..')
+  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'))
+  const exeName = path.basename(process.execPath)
 
-  const spawn = function(command: any, args: any) {
-    let spawnedProcess, error;
+  const spawn = function (command: any, args: any) {
+    let spawnedProcess, error
 
     try {
-      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
+      spawnedProcess = ChildProcess.spawn(command, args, { detached: true })
     } catch (error) {}
 
-    return spawnedProcess;
-  };
+    return spawnedProcess
+  }
 
-  const spawnUpdate = function(args: any) {
-    return spawn(updateDotExe, args);
-  };
+  const spawnUpdate = function (args: any) {
+    return spawn(updateDotExe, args)
+  }
 
-  const squirrelEvent = process.argv[1];
+  const squirrelEvent = process.argv[1]
   switch (squirrelEvent) {
     case '--squirrel-install':
     case '--squirrel-updated':
@@ -55,31 +54,30 @@ function handleSquirrelEvent() {
       //   explorer context menus
 
       // Install desktop and start menu shortcuts
-      spawnUpdate(['--createShortcut', exeName]);
+      spawnUpdate(['--createShortcut', exeName])
 
-      setTimeout(app.quit, 1000);
-      return true;
+      setTimeout(app.quit, 1000)
+      return true
 
     case '--squirrel-uninstall':
       // Undo anything you did in the --squirrel-install and
       // --squirrel-updated handlers
 
       // Remove desktop and start menu shortcuts
-      spawnUpdate(['--removeShortcut', exeName]);
+      spawnUpdate(['--removeShortcut', exeName])
 
-      setTimeout(app.quit, 1000);
-      return true;
+      setTimeout(app.quit, 1000)
+      return true
 
     case '--squirrel-obsolete':
       // This is called on the outgoing version of your app before
       // we update to the new version - it's the opposite of
       // --squirrel-updated
 
-      app.quit();
-      return true;
+      app.quit()
+      return true
   }
-};
-
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -98,7 +96,7 @@ function createWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null
-  });
+  })
 }
 
 async function initStuff() {
@@ -118,31 +116,28 @@ async function registerListeners() {
       evt.reply('online', {
         max: data.players.max,
         online: data.players.online,
-      });
+      })
     } else if (msg.type == 'reinstall') {
       await UpdateManager.manageUpdates()
-    } else if(msg.type == 'update_username'){
+    } else if (msg.type == 'update_username') {
       ConfigManager.setUsername(msg.username)
-    } else if(msg.type == 'init'){
+    } else if (msg.type == 'init') {
       ConfigManager.sendUpdate()
-    }else if(msg.type == 'launch'){
+    } else if (msg.type == 'launch') {
       LauncherManager.launch(msg)
     }
   })
 }
 
-
 if (handleSquirrelEvent()) {
   // squirrel event handled and app will exit in 1000ms, so don't do anything else
-  
-}else{
+} else {
   app
     .on('ready', createWindow)
     .whenReady()
     .then(registerListeners)
     .then(initStuff)
     .catch(e => console.error(e))
-
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -155,5 +150,4 @@ if (handleSquirrelEvent()) {
       createWindow()
     }
   })
-
 }
