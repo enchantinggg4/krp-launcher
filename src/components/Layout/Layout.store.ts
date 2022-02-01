@@ -94,7 +94,7 @@ class LayoutStore {
     } else if(this.unzipStatus){
       return `Разархивирование ${this.unzipStatus.percentage.toFixed(1)}%`
     } else {
-      return '?'
+      return 'Идет установка...'
     }
   }
 }

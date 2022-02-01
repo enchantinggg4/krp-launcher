@@ -46,7 +46,7 @@ class UpdateManager {
   }
 
   public isMinecraftInstalled() {
-    const shouldExist = ['libraries', 'natives', '1.16.5.jar', 'assets']
+    const shouldExist = ['libraries', 'assets']
     for (let filename of shouldExist) {
       if (!fs.existsSync(path.join(this.getMinecraftPath(), filename)))
         return false
@@ -143,6 +143,7 @@ class UpdateManager {
         return this.downloadModFile(file.filename, downloadUrl)
       } else if (file.action == '-') {
         fs.unlinkSync(path.join(this.getModsPath(), file.filename))
+        this.onUpdated();
         return Promise.resolve()
       }else {
         console.log("UNKNOWN ACTION??", file)
@@ -193,6 +194,9 @@ class UpdateManager {
 
   async manageUpdates() {
     // Here we install minecraft if needed and updates
+    if(!fs.existsSync(this.getMinecraftPath())){
+      fs.mkdirSync(this.getMinecraftPath());
+    }
     this.notifyUpdate()
     console.log('HEHELHEEHLLELHEL???')
 
@@ -205,7 +209,13 @@ class UpdateManager {
 
     if (!this.isMinecraftInstalled()) {
       console.log('Start unpacking zip')
-      await this.unpackMinecraft()
+      try{
+        await this.unpackMinecraft()
+      }catch(e){
+        fs.unlinkSync(path.join(this.getMinecraftPath(), "1.16.5-fabric.zip"))
+        // If we have a corrupt array
+        this.manageUpdates();
+      }
     } else {
       console.log('Zip already unpacked!')
     }
