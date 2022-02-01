@@ -100,7 +100,7 @@ const Layout = () => {
   return (
     <Container>
       <BackgroundImage />
-      <Title>Hello please update</Title>
+      <Title>1.0.4 version!!</Title>
       <MainContent></MainContent>
       <BottomRow>
         <Username
