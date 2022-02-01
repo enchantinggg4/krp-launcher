@@ -100,6 +100,7 @@ function createWindow() {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   })
+  mainWindow.removeMenu();
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 

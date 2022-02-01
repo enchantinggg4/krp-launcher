@@ -83,7 +83,7 @@
       "packagerConfig": {
         "name": "KingdomRPG",
         "executableName": "KingdomRPG",
-        "icon": "appicons/png/icon",
+        "icon": "appicons/icons/png/icon.ico",
         "extraResource": [
           "assets"
         ]
