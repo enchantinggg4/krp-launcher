@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import React, { useEffect, useState } from 'react'
 import LayoutStore from './Layout.store'
 import { observer } from 'mobx-react-lite'
+import MainPage from '../MainPage'
 
 const Container = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ const Container = styled.div`
 
 const BackgroundImage = styled.div`
   z-index: -1;
-  background-image: url('https://d2ofqe7l47306o.cloudfront.net/games/1920x1080/minecraft-by-det-medieval-tavern.jpg');
+  background-image: url('https://cdn.discordapp.com/attachments/800081672813019196/938170343552581735/unknown.png');
   background-size: cover;
   opacity: 0.2;
   width: 100vw;
@@ -100,15 +101,17 @@ const Layout = () => {
   return (
     <Container>
       <BackgroundImage />
-      <Title>1.0.4 version!!</Title>
-      <MainContent></MainContent>
+      {/*<Title>Kingdom RPG</Title>*/}
+      <MainContent>
+        <MainPage />
+      </MainContent>
       <BottomRow>
         <Username
           value={LayoutStore.username}
           onChange={e => LayoutStore.setUsername(e.target.value)}
           placeholder="Никнейм"
         />
-        <PlayButton disabled={!LayoutStore.updateStatus.updated} onClick={() => LayoutStore.launchGame()}>Играть</PlayButton>
+        <PlayButton disabled={!LayoutStore.updateStatus.updated || LayoutStore.username.trim().length === 0} onClick={() => LayoutStore.launchGame()}>Играть</PlayButton>
         <OnlineStatus>
           Онлайн: {LayoutStore.onlineCount}/{LayoutStore.maxOnlineCount}
         </OnlineStatus>

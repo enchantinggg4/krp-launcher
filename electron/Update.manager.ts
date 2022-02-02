@@ -163,11 +163,6 @@ class UpdateManager {
   }
 
   private notifyUpdate() {
-    console.log(
-      'Notify: What is this shit',
-      this.isMinecraftInstalled() &&
-        (this.updatesNeeded === 0 || this.updatesDone === this.updatesNeeded)
-    )
     mainWindow?.webContents.send('update_status', {
       updated:
         this.isMinecraftInstalled() &&
