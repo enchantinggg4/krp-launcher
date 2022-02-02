@@ -153,7 +153,14 @@ class UpdateManager {
   }
 
   private async downloadModFile(filename: string, url: string) {
-    const dl = new DownloaderHelper(url, this.getModsPath())
+    // remove old file to prevent bad things
+    fs.unlinkSync(
+      path.join(this.getModsPath(), filename)
+    )
+    // we Both remove and override: true, just in case
+    const dl = new DownloaderHelper(url, this.getModsPath(), {
+      override: true
+    })
     return dl.start().then(() => this.onUpdated())
   }
 
