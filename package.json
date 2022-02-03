@@ -1,12 +1,12 @@
 {
   "name": "kingdomrpg-launcher",
-  "author": "Diego Fernandes <diego.schell.f@gmail.com>",
+  "author": "Kingdom RPG",
   "repository": {
     "type": "git",
     "url": "https://github.com/enchantinggg4/krp-launcher.git"
   },
   "version": "1.0.8",
-  "description": "An Electron boilerplate including TypeScript, React, Jest and ESLint.",
+  "description": "Лаунчер для игры на сервере Kingdom RPG",
   "main": "./.webpack/main/index.js",
   "scripts": {
     "start": "electron-forge start",

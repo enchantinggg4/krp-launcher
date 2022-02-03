@@ -142,11 +142,13 @@ class UpdateManager {
         const downloadUrl = `${this.api.getBaseURL()}/static/${file.filename}`
         return this.downloadModFile(file.filename, downloadUrl)
       } else if (file.action == '-') {
-        fs.unlinkSync(path.join(this.getModsPath(), file.filename))
-        this.onUpdated();
+        if (fs.existsSync(path.join(this.getModsPath(), file.filename))) {
+          fs.unlinkSync(path.join(this.getModsPath(), file.filename))
+        }
+        this.onUpdated()
         return Promise.resolve()
-      }else {
-        console.log("UNKNOWN ACTION??", file)
+      } else {
+        console.log('UNKNOWN ACTION??', file)
       }
     })
     await Promise.all(promises)
@@ -154,12 +156,13 @@ class UpdateManager {
 
   private async downloadModFile(filename: string, url: string) {
     // remove old file to prevent bad things
-    fs.unlinkSync(
-      path.join(this.getModsPath(), filename)
-    )
+    if (fs.existsSync(path.join(this.getModsPath(), filename))) {
+      fs.unlinkSync(path.join(this.getModsPath(), filename))
+    }
+
     // we Both remove and override: true, just in case
     const dl = new DownloaderHelper(url, this.getModsPath(), {
-      override: true
+      override: true,
     })
     return dl.start().then(() => this.onUpdated())
   }
@@ -196,8 +199,8 @@ class UpdateManager {
 
   async manageUpdates() {
     // Here we install minecraft if needed and updates
-    if(!fs.existsSync(this.getMinecraftPath())){
-      fs.mkdirSync(this.getMinecraftPath());
+    if (!fs.existsSync(this.getMinecraftPath())) {
+      fs.mkdirSync(this.getMinecraftPath())
     }
     this.notifyUpdate()
     console.log('HEHELHEEHLLELHEL???')
@@ -211,12 +214,12 @@ class UpdateManager {
 
     if (!this.isMinecraftInstalled()) {
       console.log('Start unpacking zip')
-      try{
+      try {
         await this.unpackMinecraft()
-      }catch(e){
-        fs.unlinkSync(path.join(this.getMinecraftPath(), "1.16.5-fabric.zip"))
+      } catch (e) {
+        fs.unlinkSync(path.join(this.getMinecraftPath(), '1.16.5-fabric.zip'))
         // If we have a corrupt array
-        this.manageUpdates();
+        this.manageUpdates()
       }
     } else {
       console.log('Zip already unpacked!')
