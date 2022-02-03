@@ -1,16 +1,9 @@
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  autoUpdater,
-  dialog,
-  Menu,
-  Tray,
-} from 'electron'
+import { app, autoUpdater, BrowserWindow, ipcMain } from 'electron'
 import UpdateManager from './Update.manager'
 import { ping } from 'minecraft-server-ping'
 import LauncherManager from './Launcher.manager'
 import ConfigManager from './Config.manager'
+
 const isDev = require('electron-is-dev')
 
 export let mainWindow: BrowserWindow | null
@@ -23,7 +16,7 @@ if (!isDev) {
   const url = `${server}/update/${process.platform}/${app.getVersion()}`
 
   autoUpdater.setFeedURL({ url })
-  autoUpdater.checkForUpdates();
+  autoUpdater.checkForUpdates()
 }
 
 function handleSquirrelEvent() {
@@ -100,7 +93,7 @@ function createWindow() {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   })
-  mainWindow.removeMenu();
+  mainWindow.removeMenu()
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
@@ -110,7 +103,6 @@ function createWindow() {
 }
 
 async function initStuff() {
-  // TODO: check local file status
   await UpdateManager.manageUpdates()
 }
 
@@ -118,6 +110,7 @@ async function registerListeners() {
   /**
    * This comes from bridge integration, check bridge.ts
    */
+  mainWindow?.webContents?.send('version', app.getVersion())
   ipcMain.on('message', async (evt, message) => {
     const msg = JSON.parse(message)
     if (msg.type == 'ping') {
@@ -135,6 +128,8 @@ async function registerListeners() {
       ConfigManager.sendUpdate()
     } else if (msg.type == 'launch') {
       LauncherManager.launch(msg)
+    } else if (msg.type == 'get_version') {
+      mainWindow?.webContents?.send('version', app.getVersion())
     }
   })
 }

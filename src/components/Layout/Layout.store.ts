@@ -8,6 +8,9 @@ class LayoutStore {
   username: string = ""
 
   @observable
+  version: string = ""
+
+  @observable
   onlineCount: number = 0
 
   @observable
@@ -41,6 +44,11 @@ class LayoutStore {
       this.username = data.username;
     })
 
+    window.Main.on('version', (data: string) => {
+      this.version = data;
+      console.log("Received version")
+    })
+
     window.Main.on('download_progress', (data: Stats) => {
       console.log('DownloadStatus received')
       this.downloadStatus = data
@@ -63,6 +71,7 @@ class LayoutStore {
 
   async ping() {
     window.Main.sendMessage({ type: 'ping' })
+    window.Main.sendMessage({ type: 'get_version' })
   }
 
   async setUsername(username: string){

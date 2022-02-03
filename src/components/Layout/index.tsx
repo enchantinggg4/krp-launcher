@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import LayoutStore from './Layout.store'
 import { observer } from 'mobx-react-lite'
 import MainPage from '../MainPage'
+import {app} from "electron";
 
 const Container = styled.div`
   display: flex;
@@ -33,6 +34,14 @@ const Title = styled.div`
 
 const MainContent = styled.div`
   flex: 1;
+`
+
+const Version = styled.div`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ddd;
+    padding: 4px;
 `
 
 const PlayButton = styled.button`
@@ -102,6 +111,7 @@ const Layout = () => {
     <Container>
       <BackgroundImage />
       {/*<Title>Kingdom RPG</Title>*/}
+      <Version>{LayoutStore.version}</Version>
       <MainContent>
         <MainPage />
       </MainContent>
