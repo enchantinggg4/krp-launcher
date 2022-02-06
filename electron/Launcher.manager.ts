@@ -92,7 +92,11 @@ class LauncherManager {
 
     // Ok here we need to set token to config
     const p = path.join(UpdateManager.getMinecraftPath(), 'config', 'kingdomrpg-client.json')
-    fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }), { flag: 'wx'});
+    if(!fs.existsSync(p)){
+      fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }), { flag: 'w+'})
+    }else{
+      fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }));
+    }
 
     // now we can start
 
