@@ -88,16 +88,13 @@ class LauncherManager {
 
 
 
-  private async login() {
-    const res = await UpdateManager.api.post('/auth/login', {
-      username: ConfigManager.config.username,
-      password: ConfigManager.config.password,
-    });
-
-    console.log(res)
-  }
-
   async launch(msg: any) {
+
+    // Ok here we need to set token to config
+    const p = path.join(UpdateManager.getMinecraftPath(), 'config', 'kingdomrpg-client.json')
+    fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }), 'wx');
+
+    // now we can start
 
     let cpDelimeter = ';'
     if (process.platform === 'darwin') cpDelimeter = ':'
