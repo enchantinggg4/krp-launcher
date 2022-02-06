@@ -99,10 +99,6 @@ class LauncherManager {
 
   async launch(msg: any) {
 
-    await this.login()
-
-    return;
-
     let cpDelimeter = ';'
     if (process.platform === 'darwin') cpDelimeter = ':'
     else if (process.platform === 'win32') cpDelimeter = ';'
