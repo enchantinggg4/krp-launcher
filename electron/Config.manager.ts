@@ -5,6 +5,8 @@ import {mainWindow} from "./main";
 
 export interface Config {
   username: string
+  password: string
+  token?: string;
 }
 
 class ConfigManager {
@@ -22,6 +24,7 @@ class ConfigManager {
     } catch (e) {
       this.config = {
         username: '',
+        password: '',
       }
       this.save()
     }
@@ -29,6 +32,16 @@ class ConfigManager {
 
   public setUsername(username: string) {
     this.config.username = username
+    this.save()
+  }
+
+  public setPassword(password: string) {
+    this.config.password = password
+    this.save()
+  }
+
+  public setToken(token: string) {
+    this.config.token = token
     this.save()
   }
 

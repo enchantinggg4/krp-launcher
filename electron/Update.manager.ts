@@ -11,7 +11,7 @@ import DecompressZip from 'decompress-zip';
 class UpdateManager {
   APPDATA_DIR = '.kingdomrpg'
 
-  private api: ApisauceInstance
+  api: ApisauceInstance
 
   updatesNeeded = 0
   updatesDone = 0

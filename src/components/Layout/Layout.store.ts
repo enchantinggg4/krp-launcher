@@ -1,14 +1,75 @@
-import {makeAutoObservable, observable} from "mobx"
-import {Config} from "../../../electron/Config.manager";
-import {Stats} from "node-downloader-helper";
+import { makeAutoObservable, observable } from 'mobx'
+import { Config } from '../../../electron/Config.manager'
+import { Stats } from 'node-downloader-helper'
+import { create } from 'apisauce'
+import jwtDecode from 'jwt-decode'
+
+export enum Faction {
+  DWARF = 'DWARF',
+  HUMAN = 'HUMAN',
+  ELF = 'ELF',
+  WILD = 'WILD',
+}
+export const FactionName: Record<Faction, string> = {
+  [Faction.DWARF]: 'Гном',
+  [Faction.WILD]: 'Дикарь',
+  [Faction.ELF]: 'Эльф',
+  [Faction.HUMAN]: 'Человек',
+}
+
+export const SkillName: Record<string, string> = {
+  LUMBERJACK: 'Древоруб',
+  MINER: 'Шахтер',
+
+  SMITH: 'Кузнец',
+  CARPENTER: 'Плотник',
+  ENGINEER: 'Инженер',
+
+  FARMER: 'Фермер',
+  FISHER: 'Рыбак',
+  COOK: 'Повар',
+
+  WARRIOR: 'Воин',
+  ARCHER: 'Лучник',
+
+  ALCHEMIST: 'Алхимик',
+  ENCHANTER: 'Чародей',
+}
+
+export class SkillLevelDTO {
+  skill!: string
+  level!: number
+}
+
+export class ProfileDTO {
+  profile!: {
+    username: string
+    id: string
+    fraction: Faction
+  }
+  skills!: SkillLevelDTO[]
+}
 
 class LayoutStore {
+  api = create({
+    baseURL: 'http://5.101.50.157:3300',
+    // baseURL: 'http://localhost:3300',
+  })
 
   @observable
-  username: string = ""
+  error?: string
 
   @observable
-  version: string = ""
+  username: string = ''
+
+  @observable
+  password: string = ''
+
+  @observable
+  token?: string
+
+  @observable
+  version: string = ''
 
   @observable
   onlineCount: number = 0
@@ -21,7 +82,7 @@ class LayoutStore {
     updated: true,
     totalUpdates: 0,
     downloaded: 0,
-    minecraftDownloaded: false
+    minecraftDownloaded: false,
   }
 
   @observable
@@ -30,10 +91,17 @@ class LayoutStore {
   }
 
   @observable
-  private downloadStatus?: Stats;
+  private downloadStatus?: Stats
+
+  @observable
+  profile?: ProfileDTO
+
+  get tokenUsername(): string | undefined {
+    if (this.token) return (jwtDecode(this.token) as any).sub
+  }
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this)
 
     window.Main.on('online', (data: any) => {
       this.onlineCount = data.online
@@ -41,12 +109,17 @@ class LayoutStore {
     })
 
     window.Main.on('update_config', (data: Config) => {
-      this.username = data.username;
+      this.username = data.username
+      this.password = data.password
+      this.token = data.token
+
+      this.api.setHeader('Authorization', `Bearer ${data.token}`)
+      this.loadMe()
     })
 
     window.Main.on('version', (data: string) => {
-      this.version = data;
-      console.log("Received version")
+      this.version = data
+      console.log('Received version')
     })
 
     window.Main.on('download_progress', (data: Stats) => {
@@ -55,11 +128,11 @@ class LayoutStore {
     })
 
     window.Main.on('unzip_status', (data: any) => {
-      this.unzipStatus = data;
+      this.unzipStatus = data
     })
 
     window.Main.on('update_status', (data: any) => {
-      this.updateStatus = data;
+      this.updateStatus = data
     })
 
     setInterval(() => {
@@ -74,16 +147,35 @@ class LayoutStore {
     window.Main.sendMessage({ type: 'get_version' })
   }
 
-  async setUsername(username: string){
+  setUsername(username: string) {
     this.username = username
     window.Main.sendMessage({
       type: 'update_username',
-      username
+      username,
     })
-
+    this.error = undefined
   }
 
-  async launchGame(){
+  setPassword(password: string) {
+    this.password = password
+    window.Main.sendMessage({
+      type: 'update_password',
+      password,
+    })
+    this.error = undefined
+  }
+
+  setToken(token: string) {
+    this.token = token
+    this.api.setHeader('Authorization', `Bearer ${token}`)
+    window.Main.sendMessage({
+      type: 'update_token',
+      token,
+    })
+    this.error = undefined
+  }
+
+  async launchGame() {
     window.Main.sendMessage({ type: 'launch' })
   }
 
@@ -94,17 +186,72 @@ class LayoutStore {
 
   getUpdateStatus() {
     // console.log(this.updateStatus, this.downloadStatus)
-    if(this.updateStatus.updated){
-      return 'Установлена последняя версия!'
-    }else if(this.updateStatus.totalUpdates > 0){
+    if (this.updateStatus.updated) {
+      return 'Все файлы обновлены.'
+    } else if (this.updateStatus.totalUpdates > 0) {
       return `Установка ${this.updateStatus.downloaded}/${this.updateStatus.totalUpdates}`
-    }else if(this.downloadStatus) {
+    } else if (this.downloadStatus) {
       return `Скачивание ${this.downloadStatus?.progress.toFixed(1)}%`
-    } else if(this.unzipStatus){
+    } else if (this.unzipStatus) {
       return `Разархивирование ${this.unzipStatus.percentage.toFixed(1)}%`
     } else {
       return 'Идет установка...'
     }
+  }
+
+  async register() {
+    const res = await this.api.post<{ access_token: string }>(
+      '/auth/register',
+      {
+        username: this.username,
+        password: this.password,
+      }
+    )
+
+    if (res.ok) {
+      await this.setToken(res.data!!.access_token)
+      this.error = undefined
+      await this.loadMe()
+    } else {
+      this.error = 'Никнейм занят'
+      console.log('HELL??')
+    }
+  }
+
+  async login() {
+    const res = await this.api.post<{ access_token: string }>('/auth/login', {
+      username: this.username,
+      password: this.password,
+    })
+    if (res.ok) {
+      await this.setToken(res.data!!.access_token)
+      this.error = undefined
+      await this.loadMe()
+    } else {
+      this.error = 'Неправильный логин/пароль'
+      console.log('HELL??')
+    }
+  }
+
+  async choseFaction(faction: Faction) {
+    const res = await this.api.post<ProfileDTO>('/auth/faction', {
+      faction,
+    })
+    if (res.ok) {
+      await this.handleProfile(res.data!!)
+    }
+  }
+
+  private async handleProfile(profile: ProfileDTO) {
+    this.profile = profile
+  }
+
+  async loadMe(){
+    await this.api.get<ProfileDTO>('/auth/me').then(it => {
+      if (it.ok) {
+        this.handleProfile(it.data!!)
+      }
+    })
   }
 }
 

@@ -124,10 +124,14 @@ async function registerListeners() {
       await UpdateManager.manageUpdates()
     } else if (msg.type == 'update_username') {
       ConfigManager.setUsername(msg.username)
+    } else if (msg.type == 'update_password') {
+      ConfigManager.setPassword(msg.password)
+    } else if (msg.type == 'update_token') {
+      ConfigManager.setToken(msg.token)
     } else if (msg.type == 'init') {
       ConfigManager.sendUpdate()
     } else if (msg.type == 'launch') {
-      LauncherManager.launch(msg)
+      await LauncherManager.launch(msg)
     } else if (msg.type == 'get_version') {
       mainWindow?.webContents?.send('version', app.getVersion())
     }

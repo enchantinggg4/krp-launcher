@@ -86,7 +86,23 @@ class LauncherManager {
     return path.join(UpdateManager.getMinecraftPath(), "assets")
   }
 
-  launch(msg: any) {
+
+
+  private async login() {
+    const res = await UpdateManager.api.post('/auth/login', {
+      username: ConfigManager.config.username,
+      password: ConfigManager.config.password,
+    });
+
+    console.log(res)
+  }
+
+  async launch(msg: any) {
+
+    await this.login()
+
+    return;
+
     let cpDelimeter = ';'
     if (process.platform === 'darwin') cpDelimeter = ':'
     else if (process.platform === 'win32') cpDelimeter = ';'
@@ -114,7 +130,7 @@ class LauncherManager {
       }
 
       log.info(stdout);
-      
+
     });
 
     mainWindow?.hide();
