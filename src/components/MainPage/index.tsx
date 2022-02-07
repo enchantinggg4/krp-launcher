@@ -336,7 +336,7 @@ export default observer(() => {
   console.log(LayoutStore.profile?.profile)
   return (
     <MainPageContainer>
-      <DiscordLink target="__blank" href="https://discord.gg/kppHeADS">
+      <DiscordLink target="__blank" href="https://discord.gg/3DmvqWHGqU">
         <DiscordLogo
           src="https://www.svgrepo.com/show/353655/discord-icon.svg"
           alt=""
