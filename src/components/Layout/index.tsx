@@ -107,6 +107,11 @@ const Spacer = styled.div`
   flex: 1;
 `
 
+const LogFile = styled.div`
+  color: #ddd;
+  padding: 4px;
+  cursor: pointer;
+`
 const Layout = () => {
   const [username, setUsername] = useState('Itachi')
 
@@ -129,6 +134,9 @@ const Layout = () => {
         <MainPage />
       </MainContent>
       <BottomRow>
+        <LogFile onClick={() => window.Main.sendMessage({ type: 'open-log' })}>
+          Лог
+        </LogFile>
         {/*<Username*/}
         {/*  value={LayoutStore.tokenUsername}*/}
         {/*  onChange={e => LayoutStore.setUsername(e.target.value)}*/}
