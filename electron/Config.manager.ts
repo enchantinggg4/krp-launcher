@@ -2,18 +2,19 @@ import fs from "fs"
 import path from "path"
 import {app} from "electron";
 import {mainWindow} from "./main";
+import log from "electron-log";
 
 export interface Config {
   username: string
   password: string
-  token?: string;
+  token?: string
 }
 
 class ConfigManager {
   config: Config
 
   constructor() {
-    console.log("hey ", path.join(app.getPath('userData'), 'config.json'))
+    log.info('hey ', path.join(app.getPath('userData'), 'config.json'))
     try {
       this.config = JSON.parse(
         fs.readFileSync(
@@ -45,7 +46,7 @@ class ConfigManager {
     this.save()
   }
 
-  public sendUpdate(){
+  public sendUpdate() {
     mainWindow?.webContents.send('update_config', this.config)
   }
 

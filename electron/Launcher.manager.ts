@@ -67,7 +67,7 @@ class LauncherManager {
             jars.push(path.join(pref, file))
           }
         } else {
-          console.log(path.join(dir, file))
+          log.info(path.join(dir, file))
           fillClasspath(path.join(dir, file), path.join(pref, file))
         }
       })
@@ -119,7 +119,7 @@ class LauncherManager {
     const command = `${javaExecutableLocation} ` +
       `-Djava.library.path=${escapePath(this.getNativesLocation())} -cp ${classPathNotation} ${mainClass} ` +
       `--accessToken ${ConfigManager.config.username} --username ${ConfigManager.config.username} --version 1.16.5 --assetsDir ${escapePath(this.getAssetsLocation())} --gameDir ${escapePath(UpdateManager.getMinecraftPath())} -assetIndex 1.16`
-    console.log(command)
+    log.info(command)
     const child = exec(command, (error, stdout, stderr) => {
       if(error){
         log.error(error.stack)

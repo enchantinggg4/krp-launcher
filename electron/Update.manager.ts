@@ -1,12 +1,13 @@
-import {app} from 'electron'
+import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import crypto from 'crypto'
-import {PatchDTO, PatchesDTO} from './dto'
-import {ApisauceInstance, create} from 'apisauce'
-import {DownloaderHelper} from 'node-downloader-helper'
-import {mainWindow} from './main'
-import DecompressZip from 'decompress-zip';
+import { PatchDTO, PatchesDTO } from './dto'
+import { ApisauceInstance, create } from 'apisauce'
+import { DownloaderHelper } from 'node-downloader-helper'
+import { mainWindow } from './main'
+import DecompressZip from 'decompress-zip'
+import log from 'electron-log'
 
 class UpdateManager {
   APPDATA_DIR = '.kingdomrpg'
@@ -133,7 +134,7 @@ class UpdateManager {
     this.updatesNeeded = 0
     const diff = await this.getDiff()
     if (!diff) return
-    console.log('Update from server: ', diff)
+    log.info('Update from server: ', diff)
 
     this.updatesNeeded = diff.files.length
 
@@ -148,7 +149,7 @@ class UpdateManager {
         this.onUpdated()
         return Promise.resolve()
       } else {
-        console.log('UNKNOWN ACTION??', file)
+        log.info('UNKNOWN ACTION??', file)
       }
     })
     await Promise.all(promises)
@@ -203,17 +204,17 @@ class UpdateManager {
       fs.mkdirSync(this.getMinecraftPath())
     }
     this.notifyUpdate()
-    console.log('HEHELHEEHLLELHEL???')
+    log.info('HEHELHEEHLLELHEL???')
 
     if (!this.isMinecraftZipDownloaded()) {
-      console.log('Start downloading zip...')
+      log.info('Start downloading zip...')
       await this.downloadMinecraftZip()
     } else {
-      console.log('Zip already downloaded')
+      log.info('Zip already downloaded')
     }
 
     if (!this.isMinecraftInstalled()) {
-      console.log('Start unpacking zip')
+      log.info('Start unpacking zip')
       try {
         await this.unpackMinecraft()
       } catch (e) {
@@ -222,7 +223,7 @@ class UpdateManager {
         this.manageUpdates()
       }
     } else {
-      console.log('Zip already unpacked!')
+      log.info('Zip already unpacked!')
     }
     await this.makeUpdate()
   }

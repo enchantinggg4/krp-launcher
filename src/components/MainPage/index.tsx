@@ -64,27 +64,23 @@ const InputField = styled.input`
 `
 
 const Form = styled.div`
-position: relative;
+  position: relative;
   display: flex;
   flex-direction: column;
+  min-width: 400px;
   max-width: 400px;
   align-self: center;
 
   background-color: rgba(0, 0, 0, 0.4);
   padding: 40px;
   transition: 0.3s ease-in-out;
-  //&:hover {
-  //  background-color: rgba(0, 0, 0, 0.6);
-  //  cursor: pointer;
-  //  //box-shadow: 0px 0px 20px 2px rgba(255,255,255,0.23);
-  //}
 `
 
 const AuthTab = styled.div``
 
 const ErrorField = styled.div`
   margin: 8px 0;
-  font-size: 18px;
+  font-size: 14px;
   box-sizing: border-box;
   color: #c64141;
   outline: none;
@@ -105,7 +101,7 @@ const Button = styled.button`
 
   &:disabled {
     background: #0c364c;
-    color: #7e7e7e;
+    color: #5a5a5a;
     cursor: not-allowed;
   }
 
@@ -222,6 +218,7 @@ const AuthBlock = observer(() => {
         value={LayoutStore.username}
         onChange={e => LayoutStore.setUsername(e.target.value)}
       />
+      <ErrorField>{LayoutStore.usernameError}</ErrorField>
 
       <InputField
         type="password"
@@ -229,6 +226,8 @@ const AuthBlock = observer(() => {
         value={LayoutStore.password}
         onChange={e => LayoutStore.setPassword(e.target.value)}
       />
+
+      <ErrorField>{LayoutStore.passwordError}</ErrorField>
 
       <ErrorField>{LayoutStore.error}</ErrorField>
 
@@ -244,6 +243,7 @@ const AuthBlock = observer(() => {
       </AuthMethodSwitch>
 
       <Button
+        disabled={!LayoutStore.canLogin}
         onClick={() => {
           if (isRegister) {
             return LayoutStore.register()
@@ -336,7 +336,14 @@ export default observer(() => {
   console.log(LayoutStore.profile?.profile)
   return (
     <MainPageContainer>
-      <DiscordLink target="__blank" href="https://discord.gg/3DmvqWHGqU">
+      <DiscordLink
+        onClick={() => {
+          window.Main.sendMessage({
+            type: 'open-discord',
+            url: 'https://discord.gg/3DmvqWHGqU',
+          })
+        }}
+      >
         <DiscordLogo
           src="https://www.svgrepo.com/show/353655/discord-icon.svg"
           alt=""

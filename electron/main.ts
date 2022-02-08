@@ -1,4 +1,4 @@
-import { app, autoUpdater, BrowserWindow, ipcMain } from 'electron'
+import { app, autoUpdater, BrowserWindow, ipcMain, shell } from 'electron'
 import UpdateManager from './Update.manager'
 import { ping } from 'minecraft-server-ping'
 import LauncherManager from './Launcher.manager'
@@ -132,6 +132,8 @@ async function registerListeners() {
       ConfigManager.sendUpdate()
     } else if (msg.type == 'launch') {
       await LauncherManager.launch(msg)
+    } else if (msg.type == 'open-discord') {
+      await shell.openExternal(msg.url)
     } else if (msg.type == 'get_version') {
       mainWindow?.webContents?.send('version', app.getVersion())
     }
