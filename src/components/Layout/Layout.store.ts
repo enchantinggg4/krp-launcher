@@ -1,7 +1,7 @@
-import { computed, makeAutoObservable, observable } from 'mobx'
-import { Config } from '../../../electron/Config.manager'
-import { Stats } from 'node-downloader-helper'
-import { create } from 'apisauce'
+import {computed, makeAutoObservable, observable} from 'mobx'
+import {Config} from '../../../electron/Config.manager'
+import {Stats} from 'node-downloader-helper'
+import {create} from 'apisauce'
 import jwtDecode from 'jwt-decode'
 
 export enum Faction {
@@ -282,14 +282,19 @@ class LayoutStore {
     await this.api.get<ProfileDTO>('/auth/me').then(it => {
       if (it.ok) {
         this.handleProfile(it.data!!)
-      }else {
+      } else {
         this.logout()
       }
     })
   }
 
-  private logout(){
-    this.token = undefined;
+  private logout() {
+    this.token = undefined
+    this.api.deleteHeader('Authorization')
+    window.Main.sendMessage({
+      type: 'update_token',
+      token: undefined,
+    })
   }
 }
 
