@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import LayoutStore from './Layout.store'
 import { observer } from 'mobx-react-lite'
 import MainPage from '../MainPage'
+import Rules from '../Rules'
 
 const Container = styled.div`
   display: flex;
@@ -112,6 +113,32 @@ const LogFile = styled.div`
   padding: 4px;
   cursor: pointer;
 `
+
+const DiscordLink = styled.a`
+  text-decoration: none;
+  color: #ddd;
+  font-size: 24px;
+  display: flex;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+`
+
+const DiscordLogo = styled.img`
+  width: 50px;
+  height: 50px;
+`
+
 const Layout = () => {
   const [username, setUsername] = useState('Itachi')
 
@@ -122,7 +149,6 @@ const Layout = () => {
   return (
     <Container>
       <BackgroundImage />
-      {/*<Title>Kingdom RPG</Title>*/}
       <Version>{LayoutStore.version}</Version>
       <OnlineStatus>
         Онлайн: {LayoutStore.onlineCount}/{LayoutStore.maxOnlineCount}
@@ -131,25 +157,37 @@ const Layout = () => {
         {LayoutStore.getUpdateStatus()}
       </UpdateStatus>
       <MainContent>
-        <MainPage />
-      </MainContent>
-      <BottomRow>
-        <LogFile onClick={() => window.Main.sendMessage({ type: 'open-log' })}>
-          Лог
-        </LogFile>
-        {/*<Username*/}
-        {/*  value={LayoutStore.tokenUsername}*/}
-        {/*  onChange={e => LayoutStore.setUsername(e.target.value)}*/}
-        {/*  placeholder="Никнейм"*/}
-        {/*  readOnly*/}
-        {/*/>*/}
-        <PlayButton
-          disabled={!LayoutStore.updateStatus.updated || !LayoutStore.token}
-          onClick={() => LayoutStore.launchGame()}
+        <DiscordLink
+          onClick={() => {
+            window.Main.sendMessage({
+              type: 'open-discord',
+              url: 'https://discord.gg/3DmvqWHGqU',
+            })
+          }}
         >
-          Играть
-        </PlayButton>
-      </BottomRow>
+          <DiscordLogo
+            src="https://www.svgrepo.com/show/353655/discord-icon.svg"
+            alt=""
+          />
+          Discord
+        </DiscordLink>
+        {LayoutStore.rulesAccepted ? <MainPage /> : <Rules />}
+      </MainContent>
+      {LayoutStore.rulesAccepted && (
+        <BottomRow>
+          <LogFile
+            onClick={() => window.Main.sendMessage({ type: 'open-log' })}
+          >
+            Лог
+          </LogFile>
+          <PlayButton
+            disabled={!LayoutStore.updateStatus.updated || !LayoutStore.token}
+            onClick={() => LayoutStore.launchGame()}
+          >
+            Играть
+          </PlayButton>
+        </BottomRow>
+      )}
     </Container>
   )
 }

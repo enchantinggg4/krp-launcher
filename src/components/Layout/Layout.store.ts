@@ -1,7 +1,7 @@
-import {computed, makeAutoObservable, observable} from 'mobx'
-import {Config} from '../../../electron/Config.manager'
-import {Stats} from 'node-downloader-helper'
-import {create} from 'apisauce'
+import { computed, makeAutoObservable, observable } from 'mobx'
+import { Config } from '../../../electron/Config.manager'
+import { Stats } from 'node-downloader-helper'
+import { create } from 'apisauce'
 import jwtDecode from 'jwt-decode'
 
 export enum Faction {
@@ -96,6 +96,9 @@ class LayoutStore {
   @observable
   profile?: ProfileDTO
 
+  @observable
+  rulesAccepted?: boolean
+
   @computed
   get canLogin(): boolean {
     return !this.usernameError && !this.passwordError
@@ -103,22 +106,21 @@ class LayoutStore {
 
   @computed
   get usernameError(): string | undefined {
-
-    if(this.username.length < 3 || this.username.length > 16){
-      return "Никнейм должен быть от 3 до 16 символов"
+    if (this.username.length < 3 || this.username.length > 16) {
+      return 'Никнейм должен быть от 3 до 16 символов'
     }
 
-    const r = RegExp(/^[a-zA-Z0-9_]{2,16}$/mg)
+    const r = RegExp(/^[a-zA-Z0-9_]{2,16}$/gm)
 
-    if(!r.test(this.username)){
-      return "Только английский буквы и цифры"
+    if (!r.test(this.username)) {
+      return 'Только английский буквы и цифры'
     }
   }
 
   @computed
   get passwordError(): string | undefined {
-    if(this.password.length < 5 || this.password.length > 16){
-      return "Пароль должен быть от 5 до 16 символов"
+    if (this.password.length < 5 || this.password.length > 16) {
+      return 'Пароль должен быть от 5 до 16 символов'
     }
   }
 
@@ -138,6 +140,7 @@ class LayoutStore {
       this.username = data.username
       this.password = data.password
       this.token = data.token
+      this.rulesAccepted = data.rulesAccepted
 
       this.api.setHeader('Authorization', `Bearer ${data.token}`)
       this.loadMe()
@@ -210,6 +213,10 @@ class LayoutStore {
     window.Main.sendMessage({ type: 'reinstall' })
   }
 
+  onAcceptRules() {
+    window.Main.sendMessage({ type: 'accept_rules' })
+  }
+
   getUpdateStatus() {
     // console.log(this.updateStatus, this.downloadStatus)
     if (this.updateStatus.updated) {
@@ -240,7 +247,6 @@ class LayoutStore {
       await this.loadMe()
     } else {
       this.error = 'Никнейм занят'
-      console.log('HELL??')
     }
   }
 
@@ -276,8 +282,14 @@ class LayoutStore {
     await this.api.get<ProfileDTO>('/auth/me').then(it => {
       if (it.ok) {
         this.handleProfile(it.data!!)
+      }else {
+        this.logout()
       }
     })
+  }
+
+  private logout(){
+    this.token = undefined;
   }
 }
 

@@ -1,39 +1,19 @@
 import { observer } from 'mobx-react-lite'
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { Button } from '../Button'
 import LayoutStore, {
   Faction,
   FactionName,
   SkillName,
 } from '../Layout/Layout.store'
 
-const DiscordLink = styled.a`
-  text-decoration: none;
-  color: #ddd;
-  font-size: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: fit-content;
-  padding: 10px;
-  border-radius: 10px;
-  transition: 0.3s ease-in-out;
-  background-color: rgba(0, 0, 0, 0.1);
 
-  &:hover {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-`
 
 const MainPageContainer = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
-`
-const DiscordLogo = styled.img`
-  width: 50px;
-  height: 50px;
 `
 
 const InputField = styled.input`
@@ -63,7 +43,7 @@ const InputField = styled.input`
   }
 `
 
-const Form = styled.div`
+export const Form = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -85,30 +65,6 @@ const ErrorField = styled.div`
   color: #c64141;
   outline: none;
   border: none;
-`
-const Button = styled.button`
-  margin-top: 20px;
-  cursor: pointer;
-  font-size: 20px;
-  background-color: #073e5d; /* Green */
-  border: none;
-  color: #ddd;
-  padding: 10px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  transition: 0.3s ease-in-out;
-
-  &:disabled {
-    background: #0c364c;
-    color: #5a5a5a;
-    cursor: not-allowed;
-  }
-
-  &:hover {
-    color: white;
-    background-color: #032234; /* Green */
-  }
 `
 
 const FactionSelect = styled.div`
@@ -336,20 +292,6 @@ export default observer(() => {
   console.log(LayoutStore.profile?.profile)
   return (
     <MainPageContainer>
-      <DiscordLink
-        onClick={() => {
-          window.Main.sendMessage({
-            type: 'open-discord',
-            url: 'https://discord.gg/3DmvqWHGqU',
-          })
-        }}
-      >
-        <DiscordLogo
-          src="https://www.svgrepo.com/show/353655/discord-icon.svg"
-          alt=""
-        />
-        Discord
-      </DiscordLink>
       {!LayoutStore.token && <AuthBlock />}
 
       {LayoutStore.profile?.profile.fraction === 'WILD' && (

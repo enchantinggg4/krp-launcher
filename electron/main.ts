@@ -1,9 +1,8 @@
-import { app, autoUpdater, BrowserWindow, ipcMain, shell } from 'electron'
+import {app, autoUpdater, BrowserWindow, ipcMain, shell} from 'electron'
 import UpdateManager from './Update.manager'
-import { ping } from 'minecraft-server-ping'
+import {ping} from 'minecraft-server-ping'
 import LauncherManager from './Launcher.manager'
 import ConfigManager from './Config.manager'
-import log from 'electron-log'
 import * as path from "path";
 
 const isDev = require('electron-is-dev')
@@ -136,6 +135,8 @@ async function registerListeners() {
       await LauncherManager.launch(msg)
     } else if (msg.type == 'open-discord') {
       await shell.openExternal(msg.url)
+    }  else if (msg.type == 'accept_rules') {
+      await ConfigManager.acceptRules()
     } else if (msg.type == 'open-log') {
       await shell.showItemInFolder(path.join(app.getPath("userData"), "logs", "main.log"))
     } else if (msg.type == 'get_version') {
