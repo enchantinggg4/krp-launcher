@@ -135,7 +135,7 @@ const FactionOption = styled.div`
 const FactionChooseTitle = styled.div`
   font-size: 34px;
   align-self: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `
 
 const FactionRoot = styled.div`
@@ -219,7 +219,7 @@ const ChooseFactionBlock = observer(() => (
     <FactionChooseTitle>Выбери свою расу!</FactionChooseTitle>
     <FactionSelect>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.DWARF)}>
-        <img className="option-img" src="http://5.101.50.157/gnome.png" />
+        <img className="option-img" src="http://5.101.50.157/dwarf_default.png" />
         <div className="option-name">Гном</div>
         <div className="option-info good">Выносливый и крепкий воин</div>
         <div className="option-info good">Отлично работает с металлами</div>
@@ -228,21 +228,21 @@ const ChooseFactionBlock = observer(() => (
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.HUMAN)}>
         <img
           className="option-img"
-          src="https://lh3.googleusercontent.com/G6nXtcAzTaAY9wYsD3TBJYZtskLXfqOKtZ6BUaYDQh9exB_pHBTumW54lYSs4iIOysd34YFUEcY1vY9b4HOPbcE=s400"
+          src="http://5.101.50.157/human_default.png"
         />
         <div className="option-name">Человек</div>
         <div className="option-info good">Универсален</div>
         <div className="option-info good">
-          Врожденный бонус к боевым навыкам
+           Отличный плотник и лесоруб
         </div>
-        <div className="option-info bad">Базовые навыки ниже среднего</div>
+        <div className="option-info bad">Нет отличительных способностей</div>
       </FactionOption>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.ELF)}>
         <img className="option-img" src="http://5.101.50.157/woodelf.png" />
         <div className="option-name">Эльф</div>
         <div className="option-info good">Быстрый и ловкий воин</div>
         <div className="option-info good">Отличный лучник и разведчик</div>
-        <div className="option-info bad">Получает больше урона</div>
+        <div className="option-info bad">Сложный стартовый биом</div>
       </FactionOption>
     </FactionSelect>
   </FactionRoot>
@@ -256,11 +256,11 @@ const CharacterPreview = observer(() => {
   let url
   if (fraction == 'HUMAN') {
     url =
-      'https://lh3.googleusercontent.com/G6nXtcAzTaAY9wYsD3TBJYZtskLXfqOKtZ6BUaYDQh9exB_pHBTumW54lYSs4iIOysd34YFUEcY1vY9b4HOPbcE=s400'
+      'http://5.101.50.157/human_default.png'
   } else if (fraction == 'ELF') {
     url = 'http://5.101.50.157/woodelf.png'
   } else {
-    url = 'http://5.101.50.157/gnome.png'
+    url = 'http://5.101.50.157/dwarf_default.png'
   }
 
   function topSkill() {
@@ -278,9 +278,9 @@ const CharacterPreview = observer(() => {
           {profile.profile.username}, {FactionName[profile.profile.fraction!!]}
         </div>
         <div className="option-info">
-          {profile.skills.reduce((a, b) => a + b.level, 0)} уровень
+          {profile.skills.reduce((a, b) => a + b.level, 0) + 1} уровень
         </div>
-        {profile.skills.length && (
+        {profile.skills.length > 0 && (
           <div className="option-info">{topSkill()}</div>
         )}
       </FactionOption>
