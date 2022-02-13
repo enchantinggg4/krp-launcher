@@ -49,7 +49,7 @@ export default observer(() => {
         <br />
         <br />
 
-        <Button disabled={!LayoutStore.canLogin} onClick={() => {
+        <Button onClick={() => {
           LayoutStore.onAcceptRules()
         }}>
           Я принимаю правила игры
