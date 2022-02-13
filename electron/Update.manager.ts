@@ -1,11 +1,11 @@
-import { app } from 'electron'
+import {app} from 'electron'
 import path from 'path'
 import fs from 'fs'
 import crypto from 'crypto'
-import { PatchDTO, PatchesDTO } from './dto'
-import { ApisauceInstance, create } from 'apisauce'
-import { DownloaderHelper } from 'node-downloader-helper'
-import { mainWindow } from './main'
+import {PatchDTO, PatchesDTO} from './dto'
+import {ApisauceInstance, create} from 'apisauce'
+import {DownloaderHelper} from 'node-downloader-helper'
+import {mainWindow} from './main'
 import DecompressZip from 'decompress-zip'
 import log from 'electron-log'
 
@@ -47,12 +47,29 @@ class UpdateManager {
   }
 
   public isMinecraftInstalled() {
+    try {
+      const content = fs.readFileSync(
+        path.join(this.getMinecraftPath(), 'extract.txt'),
+        'utf-8'
+      )
+      return content === 'done'
+    } catch (e) {
+      // Old method of checking, no extract.txt yet
+    }
     const shouldExist = ['libraries', 'assets']
     for (let filename of shouldExist) {
       if (!fs.existsSync(path.join(this.getMinecraftPath(), filename)))
+        fs.writeFileSync(
+          path.join(this.getMinecraftPath(), 'extract.txt'),
+          'error'
+        )
         return false
     }
 
+    fs.writeFileSync(
+      path.join(this.getMinecraftPath(), 'extract.txt'),
+      'done'
+    )
     return true
   }
 
@@ -98,20 +115,35 @@ class UpdateManager {
       const unzipper = new DecompressZip(
         path.join(this.getMinecraftPath(), '1.16.5-fabric.zip')
       )
+      fs.writeFileSync(path.join(this.getMinecraftPath(), 'extract.txt'), '0')
       unzipper.extract({
         path: path.join(this.getMinecraftPath()),
       })
 
-      unzipper.on('error', function (err: any) {
+      unzipper.on('error', (err: any) => {
+        fs.writeFileSync(
+          path.join(this.getMinecraftPath(), 'extract.txt'),
+          'error'
+        )
         reject()
       })
 
-      unzipper.on('extract', function (log: any) {
+      unzipper.on('extract', (log: any) => {
+        fs.writeFileSync(
+          path.join(this.getMinecraftPath(), 'extract.txt'),
+          'done'
+        )
         mainWindow?.webContents.send('unzip_status', undefined)
         resolve()
       })
 
-      unzipper.on('progress', function (fileIndex: number, fileCount: number) {
+      unzipper.on('progress', (fileIndex: number, fileCount: number) => {
+        if (fileIndex % 100 == 0) {
+          fs.writeFileSync(
+            path.join(this.getMinecraftPath(), 'extract.txt'),
+            `${fileIndex + 1}\n${fileCount}`
+          )
+        }
         mainWindow?.webContents.send('unzip_status', {
           done: fileIndex + 1,
           total: fileCount,

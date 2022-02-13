@@ -111,6 +111,7 @@ async function registerListeners() {
   /**
    * This comes from bridge integration, check bridge.ts
    */
+  console.log(UpdateManager.getMinecraftPath())
   mainWindow?.webContents?.send('version', app.getVersion())
   ipcMain.on('message', async (evt, message) => {
     const msg = JSON.parse(message)
