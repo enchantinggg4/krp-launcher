@@ -74,7 +74,6 @@ class ConfigManager {
       ...this.config,
       ...partial
     };
-    console.log(this.config, partial)
     this.save();
     this.sendUpdate()
   }
