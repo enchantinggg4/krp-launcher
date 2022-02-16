@@ -168,6 +168,7 @@ class LayoutStore {
     })
 
     window.Main.on('update_status', (data: any) => {
+      console.log('Status update', data)
       this.updateStatus = data
     })
   }

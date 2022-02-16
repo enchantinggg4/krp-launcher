@@ -88,6 +88,22 @@ class LauncherManager {
 
 
 
+  private insertCustomMods(){
+    const dirPath = UpdateManager.getCustomModsPath();
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+    }
+    const files = fs.readdirSync(dirPath);
+    const outPath = UpdateManager.getModsPath();
+
+    files.forEach(file => {
+      const fullPath = path.join(dirPath, file);
+      fs.copyFileSync(fullPath, path.join(outPath, file));
+      log.info(`Copied custom mod ${file} to mods directory`);
+    })
+
+  }
+
   async launch(msg: any) {
 
     // Ok here we need to set token to config
@@ -104,22 +120,26 @@ class LauncherManager {
     if (process.platform === 'darwin') cpDelimeter = ':'
     else if (process.platform === 'win32') cpDelimeter = ';'
 
-    // const classpathJars = [...this.generateClasspath(), 'versions/Fabric-1.16.5/Fabric-1.16.5.jar'].map(it => escapePath(path.join(UpdateManager.getMinecraftPath(), it)))
+    
     const classpathJars = magicArray.map(it => escapePath(path.join(UpdateManager.getMinecraftPath(), it)))
     const classPathNotation = classpathJars.join(cpDelimeter)
 
 
-    //const javaExecutableLocation = 'java'
-    // const javaExecutableLocation = path.join(UpdateManager.getMinecraftPath(), "runtime", "jre-legacy", "bin", "java.exe")
     const javaExecutableLocation = escapePath(path.join(UpdateManager.getMinecraftPath(), "runtime/java-runtime-beta/windows/java-runtime-beta/bin/java.exe"))
 
 
     const mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotClient'
 
+
+    this.insertCustomMods()
+
     const command = `${javaExecutableLocation} ` +
       `-Djava.library.path=${escapePath(this.getNativesLocation())} -cp ${classPathNotation} ${mainClass} ` +
       `--accessToken ${ConfigManager.config.username} --username ${ConfigManager.config.username} --version 1.16.5 --assetsDir ${escapePath(this.getAssetsLocation())} --gameDir ${escapePath(UpdateManager.getMinecraftPath())} -assetIndex 1.16`
+
+    log.info('Full launch command:')
     log.info(command)
+
     const child = exec(command, (error, stdout, stderr) => {
       if(error){
         log.error(error.stack)

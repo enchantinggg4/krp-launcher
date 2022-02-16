@@ -36,6 +36,14 @@ class UpdateManager {
     return path.join(appPath, '../', this.APPDATA_DIR)
   }
 
+  public getCustomModsPath(){
+    const dirPath = path.resolve(this.getMinecraftPath(), 'custom_mods')
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+    }
+    return dirPath;    
+  }
+
   public getModsPath() {
     return path.resolve(this.getMinecraftPath(), 'mods')
   }
@@ -78,7 +86,15 @@ class UpdateManager {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true })
     }
-    const files = fs.readdirSync(dirPath)
+    
+
+    const customMods = this.getCustomPlayerMods();
+    log.info("List of player's custom mods: " , customMods);
+
+    const files = fs.readdirSync(dirPath).filter(it => !customMods.includes(it));
+
+    log.info("List of mods for diff:", files)
+
 
     const patches: PatchDTO[] = files.map(file => {
       const fullpath = path.join(dirPath, file)
@@ -161,16 +177,29 @@ class UpdateManager {
     return diff.data
   }
 
-  public async makeUpdate() {
+
+  private getCustomPlayerMods(): string[] {
+    const dirPath = this.getCustomModsPath()
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+    }
+    const files = fs.readdirSync(dirPath);
+    return files;
+  }
+
+  public async updateMods() {
     this.updatesDone = 0
     this.updatesNeeded = 0
     const diff = await this.getDiff()
     if (!diff) return
     log.info('Update from server: ', diff)
+    
 
     this.updatesNeeded = diff.files.length
 
     const promises = diff.files.map(file => {
+
+
       if (file.action == '+') {
         const downloadUrl = `${this.api.getBaseURL()}/static/${file.filename}`
         return this.downloadModFile(file.filename, downloadUrl)
@@ -181,7 +210,7 @@ class UpdateManager {
         this.onUpdated()
         return Promise.resolve()
       } else {
-        log.info('UNKNOWN ACTION??', file)
+        log.info('Unknown action for file', file, 'action is: ' + file.action)
       }
     })
     await Promise.all(promises)
@@ -227,7 +256,7 @@ class UpdateManager {
     })
 
     this.notifyUpdate()
-    await this.makeUpdate()
+    await this.updateMods()
   }
 
   async manageUpdates() {
@@ -263,7 +292,7 @@ class UpdateManager {
     } else {
       log.info('Zip already unpacked!')
     }
-    await this.makeUpdate()
+    await this.updateMods()
   }
 }
 

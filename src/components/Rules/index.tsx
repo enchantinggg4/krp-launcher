@@ -41,7 +41,7 @@ export default observer(() => {
       <Form>
         <FormTitle>Правила</FormTitle>
         <FormRule>Мультиаккаунт запрещен</FormRule>
-        <FormRule>Уничтожение построек без цели воровства</FormRule>
+        <FormRule>Уничтожение построек без цели воровства - запрещено</FormRule>
         <FormRule>Любой чит - бан без предупреждения</FormRule>
         <FormRule>Если найдешь ошибку, дюп или эксплоит - пиши админам в дискорде</FormRule>
         <FormRule>Выживать и развиваться будет тяжело. Вместе - значительно проще</FormRule>

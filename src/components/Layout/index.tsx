@@ -124,6 +124,15 @@ const DiscordLink = styled.a`
   }
 `
 
+const FolderIcon = styled.div`
+  background-image: url('https://icons-for-free.com/iconfiles/png/512/folder-131964753094019398.png');
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  cursor: pointer;
+`
+
 const SettingsButton = styled.div`
   background-image: url('https://icons.iconarchive.com/icons/grafikartes/flat-retro-modern/256/settings-icon.png');
   background-size: contain;
@@ -187,6 +196,7 @@ const Layout = () => {
           </PlayButton>
           <Spacer />
 
+          <FolderIcon onClick={() => window.Main.sendMessage({ type: 'open_directory' })} />
           <SettingsButton onClick={() => setSettings(true)} />
         </BottomRow>
       )}

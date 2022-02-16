@@ -103,15 +103,10 @@ function createWindow() {
   })
 }
 
-async function initStuff() {
-  await UpdateManager.manageUpdates()
-}
-
 async function registerListeners() {
   /**
    * This comes from bridge integration, check bridge.ts
    */
-  console.log(UpdateManager.getMinecraftPath())
   mainWindow?.webContents?.send('version', app.getVersion())
   ipcMain.on('message', async (evt, message) => {
     const msg = JSON.parse(message)
@@ -132,6 +127,7 @@ async function registerListeners() {
       ConfigManager.setToken(msg.token)
     } else if (msg.type == 'init') {
       ConfigManager.sendUpdate()
+      await UpdateManager.manageUpdates()
     } else if (msg.type == 'launch') {
       await LauncherManager.launch(msg)
     } else if (msg.type == 'open-discord') {
@@ -140,6 +136,8 @@ async function registerListeners() {
       await ConfigManager.acceptRules()
     } else if (msg.type == 'open-log') {
       await shell.showItemInFolder(path.join(app.getPath("userData"), "logs", "main.log"))
+    } else if (msg.type == 'open_directory') {
+      await shell.showItemInFolder(UpdateManager.getCustomModsPath())
     } else if (msg.type == 'get_version') {
       mainWindow?.webContents?.send('version', app.getVersion())
     }
@@ -153,7 +151,6 @@ if (handleSquirrelEvent()) {
     .on('ready', createWindow)
     .whenReady()
     .then(registerListeners)
-    .then(initStuff)
     .catch(e => console.error(e))
 
   app.on('window-all-closed', () => {
