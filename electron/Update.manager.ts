@@ -236,7 +236,7 @@ class UpdateManager {
       fs.mkdirSync(this.getMinecraftPath())
     }
     this.notifyUpdate()
-    log.info('HEHELHEEHLLELHEL???')
+    log.info('UpdateInfo: created minecraft path if not existed')
 
     if (!this.isMinecraftZipDownloaded()) {
       log.info('Start downloading zip...')
@@ -245,14 +245,20 @@ class UpdateManager {
       log.info('Zip already downloaded')
     }
 
+    log.info('Zip downloaded')
+
     if (!this.isMinecraftInstalled()) {
       log.info('Start unpacking zip')
       try {
         await this.unpackMinecraft()
       } catch (e) {
+        log.info('Encountered issue while unpacking minecraft: ')
+        log.error(e);
+        log.info('Deleting zip and restarting install process')
         fs.unlinkSync(path.join(this.getMinecraftPath(), '1.16.5-fabric.zip'))
         // If we have a corrupt array
-        this.manageUpdates()
+        await this.manageUpdates();
+        return;
       }
     } else {
       log.info('Zip already unpacked!')

@@ -1,7 +1,7 @@
-import {computed, makeAutoObservable, observable} from 'mobx'
-import {Config} from '../../../electron/Config.manager'
-import {Stats} from 'node-downloader-helper'
-import {create} from 'apisauce'
+import { computed, makeAutoObservable, observable } from 'mobx'
+import { Config } from '../../../electron/Config.manager'
+import { Stats } from 'node-downloader-helper'
+import { create } from 'apisauce'
 import jwtDecode from 'jwt-decode'
 
 export enum Faction {
@@ -59,11 +59,20 @@ class LayoutStore {
   @observable
   error?: string
 
-  @observable
-  username: string = ''
+  @computed
+  get username(): string {
+    return this.config?.username || ''
+  }
 
-  @observable
-  password: string = ''
+  @computed
+  get password(): string {
+    return this.config?.password || ''
+  }
+
+  @computed
+  get rulesAccepted(): boolean {
+    return !!this.config?.rulesAccepted
+  }
 
   @observable
   token?: string
@@ -78,8 +87,11 @@ class LayoutStore {
   maxOnlineCount: number = 0
 
   @observable
+  config?: Config
+
+  @observable
   updateStatus = {
-    updated: true,
+    updated: false,
     totalUpdates: 0,
     downloaded: 0,
     minecraftDownloaded: false,
@@ -95,9 +107,6 @@ class LayoutStore {
 
   @observable
   profile?: ProfileDTO
-
-  @observable
-  rulesAccepted?: boolean
 
   @computed
   get canLogin(): boolean {
@@ -137,10 +146,8 @@ class LayoutStore {
     })
 
     window.Main.on('update_config', (data: Config) => {
-      this.username = data.username
-      this.password = data.password
+      this.config = data
       this.token = data.token
-      this.rulesAccepted = data.rulesAccepted
 
       this.api.setHeader('Authorization', `Bearer ${data.token}`)
       this.loadMe()
@@ -163,7 +170,10 @@ class LayoutStore {
     window.Main.on('update_status', (data: any) => {
       this.updateStatus = data
     })
+  }
 
+
+  init(){
     setInterval(() => {
       this.ping()
     }, 10_000)
@@ -177,7 +187,7 @@ class LayoutStore {
   }
 
   setUsername(username: string) {
-    this.username = username
+    if (this.config) this.config.username = username
     window.Main.sendMessage({
       type: 'update_username',
       username,
@@ -186,7 +196,7 @@ class LayoutStore {
   }
 
   setPassword(password: string) {
-    this.password = password
+    if (this.config) this.config.password = password
     window.Main.sendMessage({
       type: 'update_password',
       password,
@@ -261,7 +271,6 @@ class LayoutStore {
       await this.loadMe()
     } else {
       this.error = 'Неправильный логин/пароль'
-      console.log('HELL??')
     }
   }
 

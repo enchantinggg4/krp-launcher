@@ -1,9 +1,10 @@
 import styled from 'styled-components'
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import LayoutStore from './Layout.store'
-import { observer } from 'mobx-react-lite'
+import {observer} from 'mobx-react-lite'
 import MainPage from '../MainPage'
 import Rules from '../Rules'
+import Settings from '../Settings'
 
 const Container = styled.div`
   display: flex;
@@ -93,17 +94,6 @@ const BottomRow = styled.div`
   align-items: center;
   background: rgba(0, 0, 0, 0.3);
 `
-const Username = styled.input`
-  padding: 12px 20px;
-  margin: 8px 0;
-  font-size: 18px;
-  box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.3);
-  color: #ddd;
-  outline: none;
-  border: none;
-`
-
 const Spacer = styled.div`
   flex: 1;
 `
@@ -134,16 +124,25 @@ const DiscordLink = styled.a`
   }
 `
 
+const SettingsButton = styled.div`
+  background-image: url('https://icons.iconarchive.com/icons/grafikartes/flat-retro-modern/256/settings-icon.png');
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  cursor: pointer;
+`
+
 const DiscordLogo = styled.img`
   width: 50px;
   height: 50px;
 `
 
 const Layout = () => {
-  const [username, setUsername] = useState('Itachi')
+  const [settings, setSettings] = useState(true);
 
   useEffect(() => {
-    LayoutStore.ping()
+    LayoutStore.init();
   }, [])
 
   return (
@@ -171,7 +170,7 @@ const Layout = () => {
           />
           Discord
         </DiscordLink>
-        {LayoutStore.rulesAccepted ? <MainPage /> : <Rules />}
+        {LayoutStore.rulesAccepted ? (settings ? <Settings /> : <MainPage />) : <Rules />}
       </MainContent>
       {LayoutStore.rulesAccepted && (
         <BottomRow>
@@ -186,6 +185,9 @@ const Layout = () => {
           >
             Играть
           </PlayButton>
+          <Spacer />
+
+          <SettingsButton onClick={() => setSettings(true)} />
         </BottomRow>
       )}
     </Container>
