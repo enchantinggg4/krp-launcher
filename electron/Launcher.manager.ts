@@ -104,6 +104,29 @@ class LauncherManager {
 
   }
 
+
+  constructJvmArguments(){
+    const args = [];
+    const config = ConfigManager.config;
+
+    if(config.minRamGb){
+      args.push(`-Xms${config.minRamGb}G`)
+    }
+
+    if(config.maxRamGb){
+      args.push(`-Xmx${config.maxRamGb}G`)
+    }
+    if(config.useg1gc){
+      args.push(`-XX:+UseG1GC`)
+    }
+    if(config.unlockExperimental){
+      args.push(`XX:+UnlockExperimentalVMOptions`)
+    }
+
+    // Xmx6g
+    return args.join(` `);
+  }
+
   async launch(msg: any) {
 
     // Ok here we need to set token to config
@@ -131,9 +154,11 @@ class LauncherManager {
     const mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotClient'
 
 
+    const javaArguments = this.constructJvmArguments();
     this.insertCustomMods()
 
     const command = `${javaExecutableLocation} ` +
+      `${javaArguments} ` +
       `-Djava.library.path=${escapePath(this.getNativesLocation())} -cp ${classPathNotation} ${mainClass} ` +
       `--accessToken ${ConfigManager.config.username} --username ${ConfigManager.config.username} --version 1.16.5 --assetsDir ${escapePath(this.getAssetsLocation())} --gameDir ${escapePath(UpdateManager.getMinecraftPath())} -assetIndex 1.16`
 

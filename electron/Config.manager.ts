@@ -9,6 +9,11 @@ export interface Config {
   password: string
   token?: string
   rulesAccepted?: boolean
+
+  minRamGb?: number;
+  maxRamGb?: number;
+  useg1gc?: boolean;
+  unlockExperimental?: boolean;
 }
 
 class ConfigManager {

@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import styled from 'styled-components'
+import Select from 'react-select'
 
 const MainPageContainer = styled.div`
   padding: 20px;
@@ -22,11 +23,44 @@ export const SettingsForm = styled.div`
   transition: 0.3s ease-in-out;
 `
 
+const customStyles = {
+  option: (provided: any, state: any) => ({
+    ...provided,
+    background: 'red',
+    borderBottom: '1px dotted pink',
+    color: state.isSelected ? 'red' : 'blue',
+    padding: 20,
+  }),
+  control: () => ({
+    // none of react-select's styles are passed to <Control />
+    width: 300,
+  }),
+  singleValue: (provided: any, state: any) => {
+    const opacity = state.isDisabled ? 0.5 : 1;
+    const transition = 'opacity 300ms';
+
+    return { ...provided, opacity, transition };
+  }
+}
+
+const minMemOptions: any[] = [
+  
+]
+
+for(let i = 2; i <= 8; i++){
+  minMemOptions.push(
+    { value: i, label: `${i} Гигабайт` }
+  )
+}
+
+
 export default observer(() => {
   return (
     <MainPageContainer>
       <SettingsForm>
-        hello123
+        <Select 
+         styles={customStyles}
+         options={minMemOptions} />
       </SettingsForm>
     </MainPageContainer>
   )
