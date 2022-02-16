@@ -173,8 +173,7 @@ class LayoutStore {
     })
   }
 
-
-  init(){
+  init() {
     setInterval(() => {
       this.ping()
     }, 10_000)
@@ -304,6 +303,19 @@ class LayoutStore {
     window.Main.sendMessage({
       type: 'update_token',
       token: undefined,
+    })
+  }
+
+  updateConfig(param: Partial<Config>) {
+    Object.entries(param).forEach(([k, v]) => {
+      (this.config as any)[k] = v;
+
+      (param as any)[k] = (param as any)[k] === undefined ? null : v;
+    })
+
+    window.Main.sendMessage({
+      type: 'update_config',
+      partial: param,
     })
   }
 }

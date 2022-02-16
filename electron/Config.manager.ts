@@ -68,5 +68,15 @@ class ConfigManager {
     this.save()
     this.sendUpdate()
   }
+
+  updateConfig(partial: Partial<Config>) {
+    this.config = {
+      ...this.config,
+      ...partial
+    };
+    console.log(this.config, partial)
+    this.save();
+    this.sendUpdate()
+  }
 }
 export default new ConfigManager()

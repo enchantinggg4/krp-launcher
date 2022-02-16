@@ -148,7 +148,7 @@ const DiscordLogo = styled.img`
 `
 
 const Layout = () => {
-  const [settings, setSettings] = useState(true);
+  const [settings, setSettings] = useState(false);
 
   useEffect(() => {
     LayoutStore.init();
@@ -179,7 +179,7 @@ const Layout = () => {
           />
           Discord
         </DiscordLink>
-        {LayoutStore.rulesAccepted ? (settings ? <Settings /> : <MainPage />) : <Rules />}
+        {LayoutStore.rulesAccepted ? (settings ? <Settings close={() => setSettings(false)} /> : <MainPage />) : <Rules />}
       </MainContent>
       {LayoutStore.rulesAccepted && (
         <BottomRow>
@@ -197,7 +197,7 @@ const Layout = () => {
           <Spacer />
 
           <FolderIcon onClick={() => window.Main.sendMessage({ type: 'open_directory' })} />
-          <SettingsButton onClick={() => setSettings(true)} />
+          <SettingsButton onClick={() => setSettings(!settings)} />
         </BottomRow>
       )}
     </Container>

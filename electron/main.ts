@@ -119,6 +119,9 @@ async function registerListeners() {
       })
     } else if (msg.type == 'reinstall') {
       await UpdateManager.manageUpdates()
+    } else if (msg.type == 'update_config') {
+      console.log(msg)
+      ConfigManager.updateConfig(msg.partial)
     } else if (msg.type == 'update_username') {
       ConfigManager.setUsername(msg.username)
     } else if (msg.type == 'update_password') {

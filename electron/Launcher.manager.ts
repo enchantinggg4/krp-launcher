@@ -120,7 +120,7 @@ class LauncherManager {
       args.push(`-XX:+UseG1GC`)
     }
     if(config.unlockExperimental){
-      args.push(`XX:+UnlockExperimentalVMOptions`)
+      args.push(`-XX:+UnlockExperimentalVMOptions`)
     }
 
     // Xmx6g
@@ -143,7 +143,7 @@ class LauncherManager {
     if (process.platform === 'darwin') cpDelimeter = ':'
     else if (process.platform === 'win32') cpDelimeter = ';'
 
-    
+
     const classpathJars = magicArray.map(it => escapePath(path.join(UpdateManager.getMinecraftPath(), it)))
     const classPathNotation = classpathJars.join(cpDelimeter)
 
@@ -155,6 +155,9 @@ class LauncherManager {
 
 
     const javaArguments = this.constructJvmArguments();
+
+    log.info(`Java arguments: ${javaArguments}`)
+
     this.insertCustomMods()
 
     const command = `${javaExecutableLocation} ` +

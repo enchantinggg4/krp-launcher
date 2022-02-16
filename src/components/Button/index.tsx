@@ -1,11 +1,11 @@
 import { ReactNode, ButtonHTMLAttributes } from 'react'
 
 import { Container } from './styles'
-import styled from "styled-components";
+import styled from 'styled-components'
 
 type ButtonProps = {
-  children: ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+  children: ReactNode
+} & ButtonHTMLAttributes<HTMLButtonElement>
 
 export const Button = styled.button`
   margin-top: 20px;
@@ -20,8 +20,15 @@ export const Button = styled.button`
   border-radius: 6px;
   border: 0;
   padding: 10px 24px;
-  
-  
+
+  &.inline {
+    width: fit-content;
+  }
+  &.centered {
+    align-self: center;
+    justify-self: center;
+  }
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,7 +38,7 @@ export const Button = styled.button`
     color: #5a5a5a;
     cursor: not-allowed;
   }
-  
+
   &:hover {
     filter: brightness(0.9);
   }
@@ -40,4 +47,3 @@ export const Button = styled.button`
     filter: brightness(0.7);
   }
 `
-
