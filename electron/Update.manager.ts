@@ -18,6 +18,8 @@ class UpdateManager {
   updatesDone = 0
   minecraftDownloaded = false
 
+  updateInProgress = false;
+
   unzipStatus?: {
     done: number
     total: number
@@ -260,6 +262,8 @@ class UpdateManager {
   }
 
   async manageUpdates() {
+    this.updateInProgress = true;
+    log.info("Checking for updates.")
     // Here we install minecraft if needed and updates
     if (!fs.existsSync(this.getMinecraftPath())) {
       fs.mkdirSync(this.getMinecraftPath())
@@ -293,6 +297,18 @@ class UpdateManager {
       log.info('Zip already unpacked!')
     }
     await this.updateMods()
+    this.updateInProgress = false;
+  }
+
+
+  public startPeriodicUpdates(){
+    // every 30 secs
+    setInterval(() => {
+      if(!this.updateInProgress){
+        this.manageUpdates();
+      }
+
+    }, 30_000);
   }
 }
 

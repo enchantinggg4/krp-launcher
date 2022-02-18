@@ -131,6 +131,7 @@ async function registerListeners() {
     } else if (msg.type == 'init') {
       ConfigManager.sendUpdate()
       await UpdateManager.manageUpdates()
+      UpdateManager.startPeriodicUpdates();
     } else if (msg.type == 'launch') {
       await LauncherManager.launch(msg)
     } else if (msg.type == 'open-discord') {
