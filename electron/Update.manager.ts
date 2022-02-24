@@ -8,8 +8,11 @@ import {DownloaderHelper} from 'node-downloader-helper'
 import {mainWindow} from './main'
 import DecompressZip from 'decompress-zip'
 import log from 'electron-log'
+import nbt from "nbt"
 
 class UpdateManager {
+
+  public GAME_IP = "77.246.157.161"
   APPDATA_DIR = '.kingdomrpg'
 
   api: ApisauceInstance
@@ -261,8 +264,61 @@ class UpdateManager {
     await this.updateMods()
   }
 
+  private async updateServersDat(){
+    const sDatPath = path.join(this.getMinecraftPath(), "servers.dat");
+    var data = fs.readFileSync(sDatPath);
+    const ip = this.GAME_IP;
+    return new Promise((resolve, reject) => {
+        nbt.parse(data, function(error: any, data: any) {
+          if (error) { reject(error) }
+
+          const rightValue = {
+            "name": "",
+            "value": {
+              "servers": {
+                "type": "list",
+                "value": {
+                  "type": "compound",
+                  "value": [
+                    {
+                      "ip": {
+                        "type": "string",
+                        "value": ip
+                      },
+                      "name": {
+                        "type": "string",
+                        "value": "Kingdom RPG"
+                      },
+                      "acceptTextures": {
+                        "type": "byte",
+                        "value": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+
+          const some = nbt.writeUncompressed(rightValue);
+          fs.writeFileSync(sDatPath, Buffer.from(some));
+          
+          resolve(true);
+      });
+    });
+    
+  }
+
   async manageUpdates() {
     this.updateInProgress = true;
+    log.info("Updating servers.dat...")
+    try{
+      await this.updateServersDat()
+      log.info("Updated servers.dat file");
+    }catch(e){
+      log.error("There was an issue updateing servers.dat file")
+      log.error(e);
+    }
     log.info("Checking for updates.")
     // Here we install minecraft if needed and updates
     if (!fs.existsSync(this.getMinecraftPath())) {

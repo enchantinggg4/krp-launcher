@@ -111,7 +111,7 @@ async function registerListeners() {
   ipcMain.on('message', async (evt, message) => {
     const msg = JSON.parse(message)
     if (msg.type == 'ping') {
-      const data = await ping('91.243.57.252', 25565)
+      const data = await ping(UpdateManager.GAME_IP, 25565)
       // ipcMain.send("online", )
       evt.reply('online', {
         max: data.players.max,
