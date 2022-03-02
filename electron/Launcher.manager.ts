@@ -7,6 +7,7 @@ import { escapePath } from './escape'
 import { mainWindow } from './main'
 import log from 'electron-log'
 import reportError from './reportError'
+import iconv from "iconv-lite"
 
 const magicArray = [
   `libraries/net/fabricmc/tiny-mappings-parser/0.3.0+build.17/tiny-mappings-parser-0.3.0+build.17.jar`,
@@ -170,7 +171,7 @@ class LauncherManager {
 
     this.insertCustomMods()
 
-    const command =
+    let command =
       `${javaExecutableLocation} ` +
       `${javaArguments} ` +
       `-Djava.library.path=${escapePath(
@@ -185,17 +186,25 @@ class LauncherManager {
       )} -assetIndex 1.16`
 
     log.info('Full launch command:')
-    log.info(command)
+    log.info(command);
 
-    const child = exec(command, (error, stdout, stderr) => {
-      if (error) {
-        log.error(error.stack)
-        log.error(stderr)
-        reportError(`${error} \n ${error.stack} \n ${stderr} `)
-      }
+    fs.writeFileSync(path.join(UpdateManager.getMinecraftPath(), "run.bat"), command);
 
-      log.info(stdout)
-    })
+    // command = fs.readFileSync(path.join(UpdateManager.getMinecraftPath(), "run.bat"), "utf-8");
+
+    const encoding = "utf8";
+    const sEncoding: any = "win1251";
+    const decode = (obj: any) => {
+      return iconv.decode(Buffer.from(obj, 'binary'), 'cp866')
+    }
+
+    const cmd = `${path.join(UpdateManager.getMinecraftPath(), "run.bat")}`
+    const child = exec(command, { encoding: "binary"}, (error, stdout, stderr) => {
+      const decodedOut = decode(stdout);
+      const decodedErr = decode(stderr);
+      log.info(decodedOut);
+      log.error(decodedErr);
+    });
 
     mainWindow?.hide()
 
