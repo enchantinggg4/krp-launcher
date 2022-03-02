@@ -3,7 +3,7 @@ import { Config } from '../../../electron/Config.manager'
 import { Stats } from 'node-downloader-helper'
 import { create } from 'apisauce'
 import jwtDecode from 'jwt-decode'
-
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 export enum Faction {
   DWARF = 'DWARF',
   HUMAN = 'HUMAN',
@@ -170,7 +170,18 @@ class LayoutStore {
     window.Main.on('update_status', (data: any) => {
       console.log('Status update', data)
       this.updateStatus = data
+    });
+
+    window.Main.on('update-downloaded', (data: any) => {
+      NotificationManager.success("Перезапусти лаунчер.", "Обновление скачено!",);
     })
+
+    window.Main.on('update-available', (data: any) => {
+      NotificationManager.info("Доступно обновление, скачиваю...",);
+    })
+
+    
+    
   }
 
   init() {
@@ -215,7 +226,7 @@ class LayoutStore {
   }
 
   async launchGame() {
-    window.Main.sendMessage({ type: 'launch' })
+    window.Main.sendMessage({ type: 'launch' });
   }
 
   onUpdateButton() {

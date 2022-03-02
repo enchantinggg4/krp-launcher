@@ -11,5 +11,6 @@ const should_not_escape = (major_release = "", os_build = "") =>
   /1\d+\.\d+/.test(major_release) && Number(os_build) >= 17134.1184;
 
 export function escapePath (given_path: string) {
-  return given_path.replace(/(\s+)/g, '^ ')
+  // return given_path.replace(/(\s+)/g, '^ ')
+  return `"${given_path}"`
 };

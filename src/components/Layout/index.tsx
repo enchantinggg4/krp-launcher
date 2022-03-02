@@ -5,6 +5,7 @@ import {observer} from 'mobx-react-lite'
 import MainPage from '../MainPage'
 import Rules from '../Rules'
 import Settings from '../Settings'
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const Container = styled.div`
   display: flex;
@@ -156,6 +157,7 @@ const Layout = () => {
 
   return (
     <Container>
+      <NotificationContainer/>
       <BackgroundImage />
       <Version>{LayoutStore.version}</Version>
       <OnlineStatus>

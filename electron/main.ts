@@ -12,12 +12,24 @@ export let mainWindow: BrowserWindow | null
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
-if (!isDev) {
+const setupUpdater = () => {
   const server = 'https://krp-launcher-2.vercel.app'
   const url = `${server}/update/${process.platform}/${app.getVersion()}`
 
   autoUpdater.setFeedURL({ url })
   autoUpdater.checkForUpdates()
+
+  autoUpdater.addListener('update-available', () => {
+    mainWindow?.webContents?.send('update-available');
+  });
+  autoUpdater.addListener('update-downloaded', () => {
+    mainWindow?.webContents?.send('update-downloaded');
+  });
+  
+}
+
+if (!isDev) {
+  setupUpdater()
 }
 
 function handleSquirrelEvent() {
@@ -94,6 +106,7 @@ function createWindow() {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   })
+  mainWindow.webContents.openDevTools()
   mainWindow.removeMenu()
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
