@@ -1,11 +1,12 @@
-import fs from "fs";
-import path from "path";
-import ConfigManager from "./Config.manager";
-import UpdateManager from "./Update.manager";
-import { exec, spawn } from "child_process"
-import {escapePath} from "./escape";
-import {mainWindow} from "./main";
-import log from "electron-log"
+import fs from 'fs'
+import path from 'path'
+import ConfigManager from './Config.manager'
+import UpdateManager from './Update.manager'
+import { exec, spawn } from 'child_process'
+import { escapePath } from './escape'
+import { mainWindow } from './main'
+import log from 'electron-log'
+import reportError from './reportError'
 
 const magicArray = [
   `libraries/net/fabricmc/tiny-mappings-parser/0.3.0+build.17/tiny-mappings-parser-0.3.0+build.17.jar`,
@@ -78,63 +79,69 @@ class LauncherManager {
     return jars
   }
 
-  getNativesLocation(){
-    return path.join(UpdateManager.getMinecraftPath(), "versions/Fabric-1.16.5/natives")
+  getNativesLocation() {
+    return path.join(
+      UpdateManager.getMinecraftPath(),
+      'versions/Fabric-1.16.5/natives'
+    )
   }
 
-  getAssetsLocation(){
-    return path.join(UpdateManager.getMinecraftPath(), "assets")
+  getAssetsLocation() {
+    return path.join(UpdateManager.getMinecraftPath(), 'assets')
   }
 
-
-
-  private insertCustomMods(){
-    const dirPath = UpdateManager.getCustomModsPath();
+  private insertCustomMods() {
+    const dirPath = UpdateManager.getCustomModsPath()
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true })
     }
-    const files = fs.readdirSync(dirPath);
-    const outPath = UpdateManager.getModsPath();
+    const files = fs.readdirSync(dirPath)
+    const outPath = UpdateManager.getModsPath()
 
     files.forEach(file => {
-      const fullPath = path.join(dirPath, file);
-      fs.copyFileSync(fullPath, path.join(outPath, file));
-      log.info(`Copied custom mod ${file} to mods directory`);
+      const fullPath = path.join(dirPath, file)
+      fs.copyFileSync(fullPath, path.join(outPath, file))
+      log.info(`Copied custom mod ${file} to mods directory`)
     })
-
   }
 
+  constructJvmArguments() {
+    const args = []
+    const config = ConfigManager.config
 
-  constructJvmArguments(){
-    const args = [];
-    const config = ConfigManager.config;
-
-    if(config.minRamGb){
+    if (config.minRamGb) {
       args.push(`-Xms${config.minRamGb}G`)
     }
 
-    if(config.maxRamGb){
+    if (config.maxRamGb) {
       args.push(`-Xmx${config.maxRamGb}G`)
     }
-    if(config.useg1gc){
+    if (config.useg1gc) {
       args.push(`-XX:+UseG1GC`)
     }
-    if(config.unlockExperimental){
+    if (config.unlockExperimental) {
       args.push(`-XX:+UnlockExperimentalVMOptions`)
     }
 
     // Xmx6g
-    return args.join(` `);
+    return args.join(` `)
   }
 
   async launch(msg: any) {
-
     // Ok here we need to set token to config
-    const p = path.join(UpdateManager.getMinecraftPath(), 'config', 'kingdomrpg-client.json')
-    if(!fs.existsSync(p)){
-      fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }), { flag: 'w+'})
-    }else{
-      fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }));
+    const p = path.join(
+      UpdateManager.getMinecraftPath(),
+      'config',
+      'kingdomrpg-client.json'
+    )
+    if (!fs.existsSync(p)) {
+      fs.writeFileSync(
+        p,
+        JSON.stringify({ token: ConfigManager.config.token }),
+        { flag: 'w+' }
+      )
+    } else {
+      fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }))
     }
 
     // now we can start
@@ -143,46 +150,58 @@ class LauncherManager {
     if (process.platform === 'darwin') cpDelimeter = ':'
     else if (process.platform === 'win32') cpDelimeter = ';'
 
-
-    const classpathJars = magicArray.map(it => escapePath(path.join(UpdateManager.getMinecraftPath(), it)))
+    const classpathJars = magicArray.map(it =>
+      escapePath(path.join(UpdateManager.getMinecraftPath(), it))
+    )
     const classPathNotation = classpathJars.join(cpDelimeter)
 
-
-    const javaExecutableLocation = escapePath(path.join(UpdateManager.getMinecraftPath(), "runtime/java-runtime-beta/windows/java-runtime-beta/bin/java.exe"))
-
+    const javaExecutableLocation = escapePath(
+      path.join(
+        UpdateManager.getMinecraftPath(),
+        'runtime/java-runtime-beta/windows/java-runtime-beta/bin/java.exe'
+      )
+    )
 
     const mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotClient'
 
-
-    const javaArguments = this.constructJvmArguments();
+    const javaArguments = this.constructJvmArguments()
 
     log.info(`Java arguments: ${javaArguments}`)
 
     this.insertCustomMods()
 
-    const command = `${javaExecutableLocation} ` +
+    const command =
+      `${javaExecutableLocation} ` +
       `${javaArguments} ` +
-      `-Djava.library.path=${escapePath(this.getNativesLocation())} -cp ${classPathNotation} ${mainClass} ` +
-      `--accessToken ${ConfigManager.config.username} --username ${ConfigManager.config.username} --version 1.16.5 --assetsDir ${escapePath(this.getAssetsLocation())} --gameDir ${escapePath(UpdateManager.getMinecraftPath())} -assetIndex 1.16`
+      `-Djava.library.path=${escapePath(
+        this.getNativesLocation()
+      )} -cp ${classPathNotation} ${mainClass} ` +
+      `--accessToken ${ConfigManager.config.username} --username ${
+        ConfigManager.config.username
+      } --version 1.16.5 --assetsDir ${escapePath(
+        this.getAssetsLocation()
+      )} --gameDir ${escapePath(
+        UpdateManager.getMinecraftPath()
+      )} -assetIndex 1.16`
 
     log.info('Full launch command:')
     log.info(command)
 
     const child = exec(command, (error, stdout, stderr) => {
-      if(error){
+      if (error) {
         log.error(error.stack)
         log.error(stderr)
+        reportError(`${error} \n ${error.stack} \n ${stderr} `)
       }
 
-      log.info(stdout);
+      log.info(stdout)
+    })
 
-    });
-
-    mainWindow?.hide();
+    mainWindow?.hide()
 
     child.addListener('close', () => {
       mainWindow?.show()
-    });
+    })
   }
 }
 
