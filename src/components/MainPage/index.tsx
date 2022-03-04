@@ -219,7 +219,7 @@ const ChooseFactionBlock = observer(() => (
     <FactionChooseTitle>Выбери свою расу!</FactionChooseTitle>
     <FactionSelect>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.DWARF)}>
-        <img className="option-img" src="http://5.101.50.157/dwarf_default.png" />
+        <img className="option-img" src="http://185.227.108.239/dwarf_default.png" />
         <div className="option-name">Гном</div>
         <div className="option-info good">Выносливый и крепкий воин</div>
         <div className="option-info good">Отлично работает с металлами</div>
@@ -228,7 +228,7 @@ const ChooseFactionBlock = observer(() => (
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.HUMAN)}>
         <img
           className="option-img"
-          src="http://5.101.50.157/human_default.png"
+          src="http://185.227.108.239/human_default.png"
         />
         <div className="option-name">Человек</div>
         <div className="option-info good">Универсален</div>
@@ -238,7 +238,7 @@ const ChooseFactionBlock = observer(() => (
         <div className="option-info bad">Нет отличительных способностей</div>
       </FactionOption>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.ELF)}>
-        <img className="option-img" src="http://5.101.50.157/woodelf.png" />
+        <img className="option-img" src="http://185.227.108.239/woodelf.png" />
         <div className="option-name">Эльф</div>
         <div className="option-info good">Быстрый и ловкий воин</div>
         <div className="option-info good">Отличный лучник и разведчик</div>
@@ -256,11 +256,11 @@ const CharacterPreview = observer(() => {
   let url
   if (fraction == 'HUMAN') {
     url =
-      'http://5.101.50.157/human_default.png'
+      'http://185.227.108.239/human_default.png'
   } else if (fraction == 'ELF') {
-    url = 'http://5.101.50.157/woodelf.png'
+    url = 'http://185.227.108.239/woodelf.png'
   } else {
-    url = 'http://5.101.50.157/dwarf_default.png'
+    url = 'http://185.227.108.239/dwarf_default.png'
   }
 
   function topSkill() {
