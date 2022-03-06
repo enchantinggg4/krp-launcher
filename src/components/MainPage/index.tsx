@@ -8,6 +8,7 @@ import LayoutStore, {
   SkillName,
 } from '../Layout/Layout.store'
 import SkinViewer from "react-minecraft-skin-viewer"
+import FileUploader from '../FileUploader'
 
 
 const MainPageContainer = styled.div`
@@ -79,6 +80,9 @@ const FactionOption = styled.div`
   }
 
 
+  &.single-wide:hover {
+    box-shadow: none;
+  }
 
   &.single:hover {
     box-shadow: none;
@@ -90,6 +94,8 @@ const FactionOption = styled.div`
     margin: auto;
     max-width: 300px;
   }
+
+
 
   transition: 0.3s ease-in-out;
   flex: 1;
@@ -122,6 +128,9 @@ const FactionOption = styled.div`
   }
 
   & .option-info {
+    &.spaced {
+      margin-top: 4px;
+    } 
     position: relative;
     &::before {
       content: '-';
@@ -281,12 +290,14 @@ const CharacterPreview = observer(() => {
     const skill = skills[0].skill
     return SkillName[skill]
   }
+
+  console.log("SKINNNN", url)
   return (
     <FactionSelect>
       <FactionOption className="single">
         {/* <img className="option-img" src={url} /> */}
         <div className='skin-render-holder'>
-          <SkinViewer src={url}/>
+          <SkinViewer key={url} src={url}/>
         </div>
         <div className="option-name">
           {profile.profile.username}, {FactionName[profile.profile.fraction!!]}
@@ -297,6 +308,18 @@ const CharacterPreview = observer(() => {
         {profile.skills.length > 0 && (
           <div className="option-info">{topSkill()}</div>
         )}
+      </FactionOption>
+      <FactionOption className="single-wide">
+
+        {profile.skills.map(skill => <div className="option-info spaced">
+          {SkillName[skill.skill]}, {skill.level + 1} уровень
+        </div>)}
+
+
+        <div className="option-name">Загрузи свой скин! 64х64 PNG</div>
+      <FileUploader handleFile={(f) => {
+          LayoutStore.uploadSkin(f)
+      }} />
       </FactionOption>
     </FactionSelect>
   )

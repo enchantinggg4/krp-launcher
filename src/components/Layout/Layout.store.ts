@@ -295,6 +295,7 @@ class LayoutStore {
     }
   }
 
+  
   private async handleProfile(profile: ProfileDTO) {
     this.profile = profile
   }
@@ -329,6 +330,14 @@ class LayoutStore {
       type: 'update_config',
       partial: param,
     })
+  }
+
+
+  async uploadSkin(file: File){
+    const data = new FormData();
+    data.append("file", file);
+    await this.api.post<ProfileDTO>('/user/setskin', data)
+    await this.loadMe();
   }
 }
 
