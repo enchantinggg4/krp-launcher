@@ -11,8 +11,7 @@ import log from 'electron-log'
 import nbt from "nbt"
 
 class UpdateManager {
-
-  public GAME_IP = "77.246.157.161"
+  public GAME_IP = '77.246.157.161'
   APPDATA_DIR = '.kingdomrpg'
 
   api: ApisauceInstance
@@ -21,7 +20,7 @@ class UpdateManager {
   updatesDone = 0
   minecraftDownloaded = false
 
-  updateInProgress = false;
+  updateInProgress = false
 
   unzipStatus?: {
     done: number
@@ -41,12 +40,12 @@ class UpdateManager {
     return path.join(appPath, '../', this.APPDATA_DIR)
   }
 
-  public getCustomModsPath(){
+  public getCustomModsPath() {
     const dirPath = path.resolve(this.getMinecraftPath(), 'custom_mods')
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true })
     }
-    return dirPath;    
+    return dirPath
   }
 
   public getModsPath() {
@@ -76,13 +75,10 @@ class UpdateManager {
           path.join(this.getMinecraftPath(), 'extract.txt'),
           'error'
         )
-        return false
+      return false
     }
 
-    fs.writeFileSync(
-      path.join(this.getMinecraftPath(), 'extract.txt'),
-      'done'
-    )
+    fs.writeFileSync(path.join(this.getMinecraftPath(), 'extract.txt'), 'done')
     return true
   }
 
@@ -91,15 +87,13 @@ class UpdateManager {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true })
     }
-    
 
-    const customMods = this.getCustomPlayerMods();
-    log.info("List of player's custom mods: " , customMods);
+    const customMods = this.getCustomPlayerMods()
+    log.info("List of player's custom mods: ", customMods)
 
-    const files = fs.readdirSync(dirPath).filter(it => !customMods.includes(it));
+    const files = fs.readdirSync(dirPath).filter(it => !customMods.includes(it))
 
-    log.info("List of mods for diff:", files)
-
+    log.info('List of mods for diff:', files)
 
     const patches: PatchDTO[] = files.map(file => {
       const fullpath = path.join(dirPath, file)
@@ -182,14 +176,13 @@ class UpdateManager {
     return diff.data
   }
 
-
   private getCustomPlayerMods(): string[] {
     const dirPath = this.getCustomModsPath()
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true })
     }
-    const files = fs.readdirSync(dirPath);
-    return files;
+    const files = fs.readdirSync(dirPath)
+    return files
   }
 
   public async updateMods() {
@@ -198,13 +191,10 @@ class UpdateManager {
     const diff = await this.getDiff()
     if (!diff) return
     log.info('Update from server: ', diff)
-    
 
     this.updatesNeeded = diff.files.length
 
     const promises = diff.files.map(file => {
-
-
       if (file.action == '+') {
         const downloadUrl = `${this.api.getBaseURL()}/static/${file.filename}`
         return this.downloadModFile(file.filename, downloadUrl)
@@ -264,62 +254,56 @@ class UpdateManager {
     await this.updateMods()
   }
 
-  private async updateServersDat(){
-    const sDatPath = path.join(this.getMinecraftPath(), "servers.dat");
-    var data = fs.readFileSync(sDatPath);
-    const ip = this.GAME_IP;
+  private async updateServersDat() {
+    const sDatPath = path.join(this.getMinecraftPath(), 'servers.dat')
+    const ip = this.GAME_IP
     return new Promise((resolve, reject) => {
-        nbt.parse(data, function(error: any, data: any) {
-          if (error) { reject(error) }
+      const rightValue = {
+        name: '',
+        value: {
+          servers: {
+            type: 'list',
+            value: {
+              type: 'compound',
+              value: [
+                {
+                  ip: {
+                    type: 'string',
+                    value: ip,
+                  },
+                  name: {
+                    type: 'string',
+                    value: 'Kingdom RPG',
+                  },
+                  acceptTextures: {
+                    type: 'byte',
+                    value: 1,
+                  },
+                },
+              ],
+            },
+          },
+        },
+      }
 
-          const rightValue = {
-            "name": "",
-            "value": {
-              "servers": {
-                "type": "list",
-                "value": {
-                  "type": "compound",
-                  "value": [
-                    {
-                      "ip": {
-                        "type": "string",
-                        "value": ip
-                      },
-                      "name": {
-                        "type": "string",
-                        "value": "Kingdom RPG"
-                      },
-                      "acceptTextures": {
-                        "type": "byte",
-                        "value": 1
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
+      const some = nbt.writeUncompressed(rightValue)
+      fs.writeFileSync(sDatPath, Buffer.from(some))
 
-          const some = nbt.writeUncompressed(rightValue);
-          fs.writeFileSync(sDatPath, Buffer.from(some));
-          
-          resolve(true);
-      });
-    });
-    
+      resolve(true)
+    })
   }
 
   async manageUpdates() {
-    this.updateInProgress = true;
-    log.info("Updating servers.dat...")
-    try{
+    this.updateInProgress = true
+    log.info('Updating servers.dat...')
+    try {
       await this.updateServersDat()
-      log.info("Updated servers.dat file");
-    }catch(e){
-      log.error("There was an issue updateing servers.dat file")
-      log.error(e);
+      log.info('Updated servers.dat file')
+    } catch (e) {
+      log.error('There was an issue updateing servers.dat file')
+      log.error(e)
     }
-    log.info("Checking for updates.")
+    log.info('Checking for updates.')
     // Here we install minecraft if needed and updates
     if (!fs.existsSync(this.getMinecraftPath())) {
       fs.mkdirSync(this.getMinecraftPath())
@@ -342,29 +326,27 @@ class UpdateManager {
         await this.unpackMinecraft()
       } catch (e) {
         log.info('Encountered issue while unpacking minecraft: ')
-        log.error(e);
+        log.error(e)
         log.info('Deleting zip and restarting install process')
         fs.unlinkSync(path.join(this.getMinecraftPath(), '1.16.5-fabric.zip'))
         // If we have a corrupt array
-        await this.manageUpdates();
-        return;
+        await this.manageUpdates()
+        return
       }
     } else {
       log.info('Zip already unpacked!')
     }
     await this.updateMods()
-    this.updateInProgress = false;
+    this.updateInProgress = false
   }
 
-
-  public startPeriodicUpdates(){
+  public startPeriodicUpdates() {
     // every 30 secs
     setInterval(() => {
-      if(!this.updateInProgress){
-        this.manageUpdates();
+      if (!this.updateInProgress) {
+        this.manageUpdates()
       }
-
-    }, 30_000);
+    }, 30_000)
   }
 }
 
