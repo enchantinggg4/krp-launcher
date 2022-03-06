@@ -7,7 +7,7 @@ import LayoutStore, {
   FactionName,
   SkillName,
 } from '../Layout/Layout.store'
-
+import SkinViewer from "react-minecraft-skin-viewer"
 
 
 const MainPageContainer = styled.div`
@@ -78,6 +78,8 @@ const FactionOption = styled.div`
     margin-left: 10px;
   }
 
+
+
   &.single:hover {
     box-shadow: none;
   }
@@ -101,6 +103,11 @@ const FactionOption = styled.div`
     box-shadow: 0px 0px 20px 5px rgba(232, 234, 9, 0.53);
   }
 
+  & .skin-render-holder {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
   & .option-img {
     width: auto;
     max-height: 250px;
@@ -253,16 +260,20 @@ const CharacterPreview = observer(() => {
   if (!profile) return null
   const fraction = profile.profile.fraction
 
-  let url
-  if (fraction == 'HUMAN') {
-    url =
-      'http://185.227.108.239/human_default.png'
-  } else if (fraction == 'ELF') {
-    url = 'http://185.227.108.239/woodelf.png'
-  } else {
-    url = 'http://185.227.108.239/dwarf_default.png'
+  let url = (profile.profile.skinId && profile.profile.skinId !== '0') && `http://185.227.108.239/skins/${profile.profile.skinId}` || undefined;
+
+  if(!url){
+    if (fraction == 'HUMAN') {
+      url =
+        'http://185.227.108.239/skins/human_0/human_0.png'
+    } else if (fraction == 'ELF') {
+      url = 'http://185.227.108.239/skins/elf_0/elf_0.png'
+    } else {
+      url = 'http://185.227.108.239/skins/dwarf_0/dwarf_0.png'
+    }
   }
 
+  
   function topSkill() {
     const skills = [...profile!!.skills]
     skills.sort((a, b) => b.level - a.level)
@@ -273,7 +284,10 @@ const CharacterPreview = observer(() => {
   return (
     <FactionSelect>
       <FactionOption className="single">
-        <img className="option-img" src={url} />
+        {/* <img className="option-img" src={url} /> */}
+        <div className='skin-render-holder'>
+          <SkinViewer src={url}/>
+        </div>
         <div className="option-name">
           {profile.profile.username}, {FactionName[profile.profile.fraction!!]}
         </div>

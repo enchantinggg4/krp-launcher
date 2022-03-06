@@ -46,6 +46,7 @@ export class ProfileDTO {
     username: string
     id: string
     fraction: Faction
+    skinId?: string;
   }
   skills!: SkillLevelDTO[]
 }
