@@ -235,7 +235,7 @@ const ChooseFactionBlock = observer(() => (
     <FactionChooseTitle>Выбери свою расу!</FactionChooseTitle>
     <FactionSelect>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.DWARF)}>
-        <img className="option-img" src="http://185.227.108.239/dwarf_default.png" />
+        <img className="option-img" src="http://5.101.50.157/dwarf_default.png" />
         <div className="option-name">Гном</div>
         <div className="option-info good">Выносливый и крепкий воин</div>
         <div className="option-info good">Отлично работает с металлами</div>
@@ -244,7 +244,7 @@ const ChooseFactionBlock = observer(() => (
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.HUMAN)}>
         <img
           className="option-img"
-          src="http://185.227.108.239/human_default.png"
+          src="http://5.101.50.157/human_default.png"
         />
         <div className="option-name">Человек</div>
         <div className="option-info good">Универсален</div>
@@ -254,7 +254,7 @@ const ChooseFactionBlock = observer(() => (
         <div className="option-info bad">Нет отличительных способностей</div>
       </FactionOption>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.ELF)}>
-        <img className="option-img" src="http://185.227.108.239/woodelf.png" />
+        <img className="option-img" src="http://5.101.50.157/woodelf.png" />
         <div className="option-name">Эльф</div>
         <div className="option-info good">Быстрый и ловкий воин</div>
         <div className="option-info good">Отличный лучник и разведчик</div>
@@ -269,16 +269,16 @@ const CharacterPreview = observer(() => {
   if (!profile) return null
   const fraction = profile.profile.fraction
 
-  let url = (profile.profile.skinId && profile.profile.skinId !== '0') && `http://185.227.108.239/skins/${profile.profile.skinId}` || undefined;
+  let url = (profile.profile.skinId && profile.profile.skinId !== '0') && `http://5.101.50.157/skins/${profile.profile.skinId}` || undefined;
 
   if(!url){
     if (fraction == 'HUMAN') {
       url =
-        'http://185.227.108.239/skins/human_0/human_0.png'
+        'http://5.101.50.157/skins/human_0/human_0.png'
     } else if (fraction == 'ELF') {
-      url = 'http://185.227.108.239/skins/elf_0/elf_0.png'
+      url = 'http://5.101.50.157/skins/elf_0/elf_0.png'
     } else {
-      url = 'http://185.227.108.239/skins/dwarf_0/dwarf_0.png'
+      url = 'http://5.101.50.157/skins/dwarf_0/dwarf_0.png'
     }
   }
 

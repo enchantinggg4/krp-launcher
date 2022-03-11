@@ -30,7 +30,7 @@ class UpdateManager {
 
   constructor() {
     this.api = create({
-      baseURL: 'http://185.227.108.239:3300',
+      baseURL: 'http://5.101.50.157:3300',
       // baseURL: 'http://localhost:3300',
     })
   }
@@ -111,7 +111,7 @@ class UpdateManager {
   }
 
   public async downloadMinecraftZip() {
-    const downloadUrl = 'http://185.227.108.239/1.16.5-fabric.zip'
+    const downloadUrl = 'http://5.101.50.157/1.16.5-fabric.zip'
     const helper = new DownloaderHelper(downloadUrl, this.getMinecraftPath(), {
       override: true,
     })
