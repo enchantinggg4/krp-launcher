@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const p = '/Users/itachi/Downloads/1.16.5-fabric/libraries'
+const p = 'C:/Users/StepaYurin/AppData/Roaming/.kingdomrpg/libraries'
 
 let jars = []
 
@@ -21,4 +21,4 @@ function fillClasspath(dir, pref = '') {
 
 fillClasspath(p)
 jars = jars.map(jar => `libraries/${jar}`)
-console.log(jars.join(":"))
+fs.writeFileSync('tmp.txt', jars.map(it => `"${it}"`).join(",\n").replaceAll('\\', '/'))
