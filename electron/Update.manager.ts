@@ -9,6 +9,7 @@ import {mainWindow} from './main'
 import DecompressZip from 'decompress-zip'
 import log from 'electron-log'
 import nbt from "nbt"
+import {CDN_URL, UPDATER_URL} from "../src/config";
 
 class UpdateManager {
   public GAME_IP = '77.246.157.161'
@@ -30,7 +31,7 @@ class UpdateManager {
 
   constructor() {
     this.api = create({
-      baseURL: 'http://5.101.50.157:3300',
+      baseURL: UPDATER_URL,
       // baseURL: 'http://localhost:3300',
     })
   }
@@ -111,7 +112,7 @@ class UpdateManager {
   }
 
   public async downloadMinecraftZip() {
-    const downloadUrl = 'http://5.101.50.157/1.16.5-fabric.zip'
+    const downloadUrl = `${CDN_URL}/1.16.5-fabric.zip`
     const helper = new DownloaderHelper(downloadUrl, this.getMinecraftPath(), {
       override: true,
     })

@@ -9,6 +9,8 @@ import LayoutStore, {
 } from '../Layout/Layout.store'
 import SkinViewer from "react-minecraft-skin-viewer"
 import FileUploader from '../FileUploader'
+import {CDN_URL} from "../../config";
+
 
 
 const MainPageContainer = styled.div`
@@ -235,7 +237,7 @@ const ChooseFactionBlock = observer(() => (
     <FactionChooseTitle>Выбери свою расу!</FactionChooseTitle>
     <FactionSelect>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.DWARF)}>
-        <img className="option-img" src="http://5.101.50.157/dwarf_default.png" />
+        <img className="option-img" src={`${CDN_URL}/dwarf_default.png`} />
         <div className="option-name">Гном</div>
         <div className="option-info good">Выносливый и крепкий воин</div>
         <div className="option-info good">Отлично работает с металлами</div>
@@ -282,7 +284,7 @@ const CharacterPreview = observer(() => {
     }
   }
 
-  
+
   function topSkill() {
     const skills = [...profile!!.skills]
     skills.sort((a, b) => b.level - a.level)

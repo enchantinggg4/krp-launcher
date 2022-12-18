@@ -4,6 +4,7 @@ import { Stats } from 'node-downloader-helper'
 import { create } from 'apisauce'
 import jwtDecode from 'jwt-decode'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {UPDATER_URL} from "../../config";
 export enum Faction {
   DWARF = 'DWARF',
   HUMAN = 'HUMAN',
@@ -53,7 +54,7 @@ export class ProfileDTO {
 
 class LayoutStore {
   api = create({
-    baseURL: 'http://5.101.50.157:3300',
+    baseURL: UPDATER_URL,
     // baseURL: 'http://localhost:3300',
   })
 
@@ -181,8 +182,8 @@ class LayoutStore {
       NotificationManager.info("Доступно обновление, скачиваю...",);
     })
 
-    
-    
+
+
   }
 
   init() {
@@ -295,7 +296,7 @@ class LayoutStore {
     }
   }
 
-  
+
   private async handleProfile(profile: ProfileDTO) {
     this.profile = profile
   }
