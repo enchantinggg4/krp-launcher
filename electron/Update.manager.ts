@@ -12,7 +12,7 @@ import nbt from "nbt"
 import {CDN_URL, UPDATER_URL} from "../src/config";
 
 class UpdateManager {
-  public GAME_IP = '77.246.157.161'
+  public GAME_IP = '45.141.184.241'
   APPDATA_DIR = '.kingdomrpg'
 
   api: ApisauceInstance
