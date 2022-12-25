@@ -20,6 +20,7 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
+    "@wiicamp/react-minecraft-skin-viewer": "^1.0.6",
     "apisauce": "^2.1.5",
     "decompress-zip": "^0.3.3",
     "electron-is-dev": "^2.0.0",

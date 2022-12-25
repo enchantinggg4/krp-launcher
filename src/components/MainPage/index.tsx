@@ -8,8 +8,12 @@ import LayoutStore, {
   SkillName,
 } from '../Layout/Layout.store'
 import SkinViewer from "react-minecraft-skin-viewer"
+
+import { MinecraftSkinViewer } from '@wiicamp/react-minecraft-skin-viewer'
+
+
 import FileUploader from '../FileUploader'
-import {CDN_URL} from "../../config";
+import {CDN_URL, UPDATER_URL} from "../../config";
 
 
 
@@ -95,6 +99,11 @@ const FactionOption = styled.div`
     justify-self: center;
     margin: auto;
     max-width: 300px;
+  }
+
+  & .skin-viewer-wrapper {
+    margin: auto;
+    // background: #aadd00;
   }
 
 
@@ -237,17 +246,18 @@ const ChooseFactionBlock = observer(() => (
     <FactionChooseTitle>Выбери свою расу!</FactionChooseTitle>
     <FactionSelect>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.DWARF)}>
-        <img className="option-img" src={`${CDN_URL}/dwarf_default.png`} />
+        <div className="skin-viewer-wrapper">
+          <MinecraftSkinViewer walk background={undefined} width={150} height={250} skin={`${UPDATER_URL}/skins/dwarf_default.png`} />
+        </div>
         <div className="option-name">Гном</div>
         <div className="option-info good">Выносливый и крепкий воин</div>
         <div className="option-info good">Отлично работает с металлами</div>
         <div className="option-info bad">Не самый быстрый</div>
       </FactionOption>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.HUMAN)}>
-        <img
-          className="option-img"
-          src="http://5.101.50.157/human_default.png"
-        />
+        <div className="skin-viewer-wrapper">
+        <MinecraftSkinViewer walk background={undefined} width={150} height={250} skin={`${UPDATER_URL}/skins/human_default.png`} />
+        </div>
         <div className="option-name">Человек</div>
         <div className="option-info good">Универсален</div>
         <div className="option-info good">
@@ -256,7 +266,9 @@ const ChooseFactionBlock = observer(() => (
         <div className="option-info bad">Нет отличительных способностей</div>
       </FactionOption>
       <FactionOption onClick={() => LayoutStore.choseFaction(Faction.ELF)}>
-        <img className="option-img" src="http://5.101.50.157/woodelf.png" />
+        <div className="skin-viewer-wrapper">
+        <MinecraftSkinViewer walk background={undefined} width={150} height={250} skin={`${UPDATER_URL}/skins/elf_default.png`} />
+        </div>
         <div className="option-name">Эльф</div>
         <div className="option-info good">Быстрый и ловкий воин</div>
         <div className="option-info good">Отличный лучник и разведчик</div>
@@ -271,16 +283,16 @@ const CharacterPreview = observer(() => {
   if (!profile) return null
   const fraction = profile.profile.fraction
 
-  let url = (profile.profile.skinId && profile.profile.skinId !== '0') && `http://5.101.50.157/skins/${profile.profile.skinId}` || undefined;
+  let url = (profile.profile.skinId && profile.profile.skinId !== '0') && `${UPDATER_URL}/skins/${profile.profile.skinId}` || undefined;
 
   if(!url){
     if (fraction == 'HUMAN') {
       url =
-        'http://5.101.50.157/skins/human_0/human_0.png'
+        `${UPDATER_URL}/skins/human_default.png`
     } else if (fraction == 'ELF') {
-      url = 'http://5.101.50.157/skins/elf_0/elf_0.png'
+      url = `${UPDATER_URL}/skins/elf_default.png`
     } else {
-      url = 'http://5.101.50.157/skins/dwarf_0/dwarf_0.png'
+      url = `${UPDATER_URL}/skins/dwarf_default.png`
     }
   }
 
@@ -299,7 +311,7 @@ const CharacterPreview = observer(() => {
       <FactionOption className="single">
         {/* <img className="option-img" src={url} /> */}
         <div className='skin-render-holder'>
-          <SkinViewer key={url} src={url}/>
+          <MinecraftSkinViewer walk background={undefined} width={150} height={250} skin={url} />
         </div>
         <div className="option-name">
           {profile.profile.username}, {FactionName[profile.profile.fraction!!]}
