@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/enchantinggg4/krp-launcher.git"
   },
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Лаунчер для игры на сервере Kingdom RPG",
   "main": "./.webpack/main/index.js",
   "scripts": {
