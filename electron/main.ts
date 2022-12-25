@@ -20,9 +20,11 @@ const setupUpdater = () => {
   autoUpdater.checkForUpdates()
 
   autoUpdater.addListener('update-available', () => {
+    console.log('[AutoUpdater] Update available!')
     mainWindow?.webContents?.send('update-available');
   });
   autoUpdater.addListener('update-downloaded', () => {
+    console.log('[AutoUpdater] Update downloaded')
     mainWindow?.webContents?.send('update-downloaded');
   });
   
