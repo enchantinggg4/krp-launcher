@@ -203,13 +203,11 @@ class LauncherManager {
 
     // command = fs.readFileSync(path.join(UpdateManager.getMinecraftPath(), "run.bat"), "utf-8");
 
-    const encoding = "utf8";
-    const sEncoding: any = "win1251";
+    
     const decode = (obj: any) => {
       return iconv.decode(Buffer.from(obj, 'binary'), 'cp866')
     }
 
-    const cmd = `${path.join(UpdateManager.getMinecraftPath(), "run.bat")}`
     const child = exec(command, { encoding: "binary"}, (error, stdout, stderr) => {
       const decodedOut = decode(stdout);
       const decodedErr = decode(stderr);
@@ -218,9 +216,13 @@ class LauncherManager {
     });
 
     mainWindow?.hide()
+    UpdateManager.isGameRunning = true;
+    // TODO: disable updates
 
     child.addListener('close', () => {
       mainWindow?.show()
+      UpdateManager.isGameRunning = false;
+      // TODO: enable updates again
     })
   }
 }

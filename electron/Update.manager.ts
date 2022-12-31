@@ -15,6 +15,8 @@ class UpdateManager {
   public GAME_IP = '45.141.184.241'
   APPDATA_DIR = '.kingdomrpg'
 
+  isGameRunning: boolean = false
+
   api: ApisauceInstance
 
   updatesNeeded = 0
@@ -297,6 +299,7 @@ class UpdateManager {
 
   async manageUpdates() {
     if(this.updateInProgress) return;
+    if(this.isGameRunning) return;
 
     this.updateInProgress = true
     log.info('Updating servers.dat...')
