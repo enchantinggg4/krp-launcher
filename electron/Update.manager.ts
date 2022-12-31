@@ -194,6 +194,7 @@ class UpdateManager {
     log.info('Update from server: ', diff)
 
     this.updatesNeeded = diff.files.length
+    this.notifyUpdate()
 
     const promises = diff.files.map(file => {
       if (file.action == '+') {
@@ -295,6 +296,8 @@ class UpdateManager {
   }
 
   async manageUpdates() {
+    if(this.updateInProgress) return;
+
     this.updateInProgress = true
     log.info('Updating servers.dat...')
     try {
@@ -347,7 +350,7 @@ class UpdateManager {
       if (!this.updateInProgress) {
         this.manageUpdates()
       }
-    }, 30_000)
+    }, 10_000)
   }
 }
 

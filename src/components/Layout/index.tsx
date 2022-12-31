@@ -6,6 +6,7 @@ import MainPage from '../MainPage'
 import Rules from '../Rules'
 import Settings from '../Settings'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { CDN_URL } from '../../config'
 
 const Container = styled.div`
   display: flex;
@@ -93,7 +94,7 @@ const BottomRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: rgba(0, 0, 0, 0.3);
+ background: rgba(0,0,0, 0.8);
 `
 const Spacer = styled.div`
   flex: 1;
@@ -105,28 +106,30 @@ const LogFile = styled.div`
   cursor: pointer;
 `
 
-const DiscordLink = styled.a`
-  text-decoration: none;
-  color: #ddd;
-  font-size: 24px;
-  display: flex;
-  cursor: pointer;
-  flex-direction: column;
-  align-items: center;
-  width: fit-content;
-  padding: 10px;
-  border-radius: 10px;
-  transition: 0.3s ease-in-out;
-  background-color: rgba(0, 0, 0, 0.1);
+
+const DiscordIcon = styled.div`
+  opacity: 0.5;
+  transition: 0.3s ease;
 
   &:hover {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 1;
   }
+  background-image: url('${CDN_URL}/discord.svg');
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  cursor: pointer;
 `
 
 const FolderIcon = styled.div`
-  background-image: url('https://icons-for-free.com/iconfiles/png/512/folder-131964753094019398.png');
+  opacity: 0.5;
+  transition: 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+  background-image: url('${CDN_URL}/folder.png');
   background-size: contain;
   width: 40px;
   height: 40px;
@@ -135,17 +138,18 @@ const FolderIcon = styled.div`
 `
 
 const SettingsButton = styled.div`
-  background-image: url('https://icons.iconarchive.com/icons/grafikartes/flat-retro-modern/256/settings-icon.png');
+  opacity: 0.5;
+  transition: 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+  background-image: url('https://cdn-icons-png.flaticon.com/512/3953/3953226.png');
   background-size: contain;
   width: 40px;
   height: 40px;
   margin-right: 20px;
   cursor: pointer;
-`
-
-const DiscordLogo = styled.img`
-  width: 50px;
-  height: 50px;
 `
 
 const Layout = () => {
@@ -167,20 +171,6 @@ const Layout = () => {
         {LayoutStore.getUpdateStatus()}
       </UpdateStatus>
       <MainContent>
-        <DiscordLink
-          onClick={() => {
-            window.Main.sendMessage({
-              type: 'open-discord',
-              url: 'https://discord.gg/3DmvqWHGqU',
-            })
-          }}
-        >
-          <DiscordLogo
-            src="https://www.svgrepo.com/show/353655/discord-icon.svg"
-            alt=""
-          />
-          Discord
-        </DiscordLink>
         {LayoutStore.rulesAccepted ? (settings ? <Settings close={() => setSettings(false)} /> : <MainPage />) : <Rules />}
       </MainContent>
       {LayoutStore.rulesAccepted && (
@@ -198,6 +188,12 @@ const Layout = () => {
           </PlayButton>
           <Spacer />
 
+          <DiscordIcon onClick={() => {
+            window.Main.sendMessage({
+              type: 'open-discord',
+              url: 'https://discord.gg/3DmvqWHGqU',
+            })
+          }} />
           <FolderIcon onClick={() => window.Main.sendMessage({ type: 'open_directory' })} />
           <SettingsButton onClick={() => setSettings(!settings)} />
         </BottomRow>

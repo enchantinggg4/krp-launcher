@@ -80,6 +80,34 @@ const FactionSelect = styled.div`
   flex: 1;
 `
 
+const CharacterPreviewDiv = styled.div`
+  transition: 0.3s ease-in-out;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  width: 300px;
+  align-self: center;
+  justify-self: center;
+  margin: auto;
+  margin-top: 100px;
+  max-width: 300px;
+
+  & .skin-render-holder {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
+
+  & .option-name {
+    margin-top: 10px;
+    font-size: 24px;
+    color: white;
+    align-self: center;
+  }
+`
+
 const FactionOption = styled.div`
   & + & {
     margin-left: 10px;
@@ -305,36 +333,23 @@ const CharacterPreview = observer(() => {
     return SkillName[skill]
   }
 
-  console.log("SKINNNN", url)
   return (
     <FactionSelect>
-      <FactionOption className="single">
+      <CharacterPreviewDiv className="single">
         {/* <img className="option-img" src={url} /> */}
         <div className='skin-render-holder'>
           <MinecraftSkinViewer walk background={undefined} width={150} height={250} skin={url} />
         </div>
         <div className="option-name">
-          {profile.profile.username}, {FactionName[profile.profile.fraction!!]}
+          {profile.profile.username}
         </div>
-        <div className="option-info">
-          {profile.skills.reduce((a, b) => a + b.level, 0) + 1} уровень
+        <div className="option-name">
+          {FactionName[profile.profile.fraction!!]}, {profile.skills.reduce((a, b) => a + b.level, 0) + 1} уровень
         </div>
-        {profile.skills.length > 0 && (
-          <div className="option-info">{topSkill()}</div>
-        )}
-      </FactionOption>
-      <FactionOption className="single-wide">
-
-        {profile.skills.map(skill => <div className="option-info spaced">
-          {SkillName[skill.skill]}, {skill.level + 1} уровень
-        </div>)}
-
-
-        <div className="option-name">Загрузи свой скин! 64х64 PNG</div>
-      <FileUploader handleFile={(f) => {
+        <FileUploader handleFile={(f) => {
           LayoutStore.uploadSkin(f)
       }} />
-      </FactionOption>
+      </CharacterPreviewDiv>
     </FactionSelect>
   )
 })
