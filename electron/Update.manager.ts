@@ -308,6 +308,8 @@ class UpdateManager {
   }
 
   async manageUpdates() {
+    // TODO REMOVE
+    return;
     if(this.updateInProgress) return;
     if(this.isGameRunning) return;
 

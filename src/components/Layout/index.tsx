@@ -1,11 +1,8 @@
 import styled from 'styled-components'
-import React, {useEffect, useState} from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import LayoutStore from './Layout.store'
-import {observer} from 'mobx-react-lite'
-import MainPage from '../MainPage'
-import Rules from '../Rules'
-import Settings from '../Settings'
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { observer } from 'mobx-react-lite'
+import { NotificationContainer } from 'react-notifications'
 import { CDN_URL } from '../../config'
 
 const Container = styled.div`
@@ -13,11 +10,14 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
 `
 
 const BackgroundImage = styled.div`
   z-index: -1;
-  background-image: url('https://cdn.discordapp.com/attachments/800081672813019196/938170343552581735/unknown.png');
+  //background-image: url('https://cdn.discordapp.com/attachments/800081672813019196/938170343552581735/unknown.png');
+  background-image: url('https://cdn.discordapp.com/attachments/930178487778693163/1057800413824434176/3ebc88985701fafc.png');
   background-size: cover;
   opacity: 0.1;
   width: 100vw;
@@ -31,6 +31,7 @@ const BackgroundImage = styled.div`
 
 const MainContent = styled.div`
   flex: 1;
+overflow: hidden;
 `
 
 const Version = styled.div`
@@ -94,7 +95,7 @@ const BottomRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
- background: rgba(0,0,0, 0.8);
+  background: rgba(0, 0, 0, 0.8);
 `
 const Spacer = styled.div`
   flex: 1;
@@ -105,7 +106,6 @@ const LogFile = styled.div`
   padding: 4px;
   cursor: pointer;
 `
-
 
 const DiscordIcon = styled.div`
   opacity: 0.5;
@@ -152,16 +152,18 @@ const SettingsButton = styled.div`
   cursor: pointer;
 `
 
-const Layout = () => {
-  const [settings, setSettings] = useState(false);
+const Layout = (props: PropsWithChildren<{}>) => {
+  const [settings, setSettings] = useState(false)
+
+  const showPlayButton = LayoutStore.token && LayoutStore.rulesAccepted
 
   useEffect(() => {
-    LayoutStore.init();
+    LayoutStore.init()
   }, [])
 
   return (
     <Container>
-      <NotificationContainer/>
+      <NotificationContainer />
       <BackgroundImage />
       <Version>{LayoutStore.version}</Version>
       <OnlineStatus>
@@ -171,9 +173,11 @@ const Layout = () => {
         {LayoutStore.getUpdateStatus()}
       </UpdateStatus>
       <MainContent>
-        {LayoutStore.rulesAccepted ? (settings ? <Settings close={() => setSettings(false)} /> : <MainPage />) : <Rules />}
+        {props.children}
+        {/*{LayoutStore.rulesAccepted ? (settings ? <Settings close={() => setSettings(false)} /> : <MainPage />) : <Rules />}*/}
       </MainContent>
-      {LayoutStore.rulesAccepted && (
+
+      {showPlayButton && (
         <BottomRow>
           <LogFile
             onClick={() => window.Main.sendMessage({ type: 'open-log' })}
@@ -188,13 +192,17 @@ const Layout = () => {
           </PlayButton>
           <Spacer />
 
-          <DiscordIcon onClick={() => {
-            window.Main.sendMessage({
-              type: 'open-discord',
-              url: 'https://discord.gg/3DmvqWHGqU',
-            })
-          }} />
-          <FolderIcon onClick={() => window.Main.sendMessage({ type: 'open_directory' })} />
+          <DiscordIcon
+            onClick={() => {
+              window.Main.sendMessage({
+                type: 'open-discord',
+                url: 'https://discord.gg/3DmvqWHGqU',
+              })
+            }}
+          />
+          <FolderIcon
+            onClick={() => window.Main.sendMessage({ type: 'open_directory' })}
+          />
           <SettingsButton onClick={() => setSettings(!settings)} />
         </BottomRow>
       )}
