@@ -4,6 +4,7 @@ import LayoutStore from './Layout.store'
 import { observer } from 'mobx-react-lite'
 import { NotificationContainer } from 'react-notifications'
 import { CDN_URL } from '../../config'
+import {useHistory} from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -155,6 +156,8 @@ const SettingsButton = styled.div`
 const Layout = (props: PropsWithChildren<{}>) => {
   const [settings, setSettings] = useState(false)
 
+
+  const history = useHistory()
   const showPlayButton = LayoutStore.token && LayoutStore.rulesAccepted
 
   useEffect(() => {
@@ -203,7 +206,7 @@ const Layout = (props: PropsWithChildren<{}>) => {
           <FolderIcon
             onClick={() => window.Main.sendMessage({ type: 'open_directory' })}
           />
-          <SettingsButton onClick={() => setSettings(!settings)} />
+          <SettingsButton onClick={() => history.push('/settings')} />
         </BottomRow>
       )}
     </Container>

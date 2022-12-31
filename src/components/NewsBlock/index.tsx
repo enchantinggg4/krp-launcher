@@ -23,10 +23,12 @@ const NewsBlock = styled.div`
     & .post-image {
       margin-bottom: 10px;
       max-width: 100%;
+      //max-width: 550px;
     }
     
     & .content-text {
       margin-top: 20px;
+      white-space: break-spaces;
     }
   }
 `

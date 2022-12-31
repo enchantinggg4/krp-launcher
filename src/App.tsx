@@ -7,6 +7,7 @@ import Auth from './pages/auth'
 import Rules from './pages/rules'
 import Splash from "./pages/splash";
 import Main from "./pages/main";
+import Settings from "./pages/settings";
 
 export function App() {
   return (
@@ -17,6 +18,7 @@ export function App() {
           <Route path="/auth" component={Auth} />
           <Route path="/rules" component={Rules} />
           <Route path="/main" component={Main} />
+          <Route path="/settings" component={Settings} />
 
           <Route component={Splash} />
         </Layout>
