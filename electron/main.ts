@@ -27,7 +27,7 @@ const setupUpdater = () => {
     console.log('[AutoUpdater] Update downloaded')
     mainWindow?.webContents?.send('update-downloaded');
   });
-  
+
 }
 
 if (!isDev) {
@@ -184,3 +184,9 @@ if (handleSquirrelEvent()) {
     }
   })
 }
+
+process.on('uncaughtException', function (error) {
+  // Handle the error
+  console.log(error.stack)
+  console.trace()
+});

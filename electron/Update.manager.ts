@@ -100,14 +100,18 @@ class UpdateManager {
 
     const patches: PatchDTO[] = files.map(file => {
       const fullpath = path.join(dirPath, file)
-      const fileBuffer = fs.readFileSync(fullpath)
-      const hashSum = crypto.createHash('sha256')
-      hashSum.update(fileBuffer)
-      return {
-        filename: file,
-        hash: hashSum.digest('hex'),
+      try {
+        const fileBuffer = fs.readFileSync(fullpath)
+        const hashSum = crypto.createHash('sha256')
+        hashSum.update(fileBuffer)
+        return {
+          filename: file,
+          hash: hashSum.digest('hex'),
+        }
+      } catch (e){
+        return null;
       }
-    })
+    }).filter(Boolean) as PatchDTO[]
     return {
       files: patches,
     }
@@ -224,8 +228,14 @@ class UpdateManager {
     // we Both remove and override: true, just in case
     const dl = new DownloaderHelper(url, this.getModsPath(), {
       override: true,
-    })
-    return dl.start().then(() => this.onUpdated())
+      removeOnFail: true,
+      retry: {
+        maxRetries: 2,
+        delay: 500
+      }
+    });
+
+    return dl.start().then(() => this.onUpdated()).catch()
   }
 
   private onUpdated() {
@@ -343,7 +353,13 @@ class UpdateManager {
     } else {
       log.info('Zip already unpacked!')
     }
-    await this.updateMods()
+    try{
+      await this.updateMods()
+    }catch (e){
+      // whops
+      log.error('We had an issue updating mods...')
+      log.error(e)
+    }
     this.updateInProgress = false
   }
 
