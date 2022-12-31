@@ -324,15 +324,6 @@ const CharacterPreview = observer(() => {
     }
   }
 
-
-  function topSkill() {
-    const skills = [...profile!!.skills]
-    skills.sort((a, b) => b.level - a.level)
-
-    const skill = skills[0].skill
-    return SkillName[skill]
-  }
-
   return (
     <FactionSelect>
       <CharacterPreviewDiv className="single">
@@ -344,7 +335,7 @@ const CharacterPreview = observer(() => {
           {profile.profile.username}
         </div>
         <div className="option-name">
-          {FactionName[profile.profile.fraction!!]}, {profile.skills.reduce((a, b) => a + b.level, 0) + 1} уровень
+          {profile.skills.reduce((a, b) => a + b.level, 0) + 1} уровень
         </div>
         <FileUploader handleFile={(f) => {
           LayoutStore.uploadSkin(f)
@@ -359,13 +350,7 @@ export default observer(() => {
   return (
     <MainPageContainer>
       {!LayoutStore.token && <AuthBlock />}
-
-      {LayoutStore.profile?.profile.fraction === 'WILD' && (
-        <ChooseFactionBlock />
-      )}
-
-      {LayoutStore.profile &&
-        LayoutStore.profile.profile.fraction != 'WILD' && <CharacterPreview />}
+      {LayoutStore.profile && <CharacterPreview />}
     </MainPageContainer>
   )
 })
