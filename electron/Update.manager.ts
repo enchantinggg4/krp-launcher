@@ -312,14 +312,7 @@ class UpdateManager {
     if(this.isGameRunning) return;
 
     this.updateInProgress = true
-    log.info('Updating servers.dat...')
-    try {
-      await this.updateServersDat()
-      log.info('Updated servers.dat file')
-    } catch (e) {
-      log.error('There was an issue updateing servers.dat file')
-      log.error(e)
-    }
+    
     log.info('Checking for updates.')
     // Here we install minecraft if needed and updates
     if (!fs.existsSync(this.getMinecraftPath())) {
@@ -353,6 +346,16 @@ class UpdateManager {
     } else {
       log.info('Zip already unpacked!')
     }
+
+    log.info('Updating servers.dat...')
+    try {
+      await this.updateServersDat()
+      log.info('Updated servers.dat file')
+    } catch (e) {
+      log.error('There was an issue updateing servers.dat file')
+      log.error(e)
+    }
+    
     try{
       await this.updateMods()
     }catch (e){
