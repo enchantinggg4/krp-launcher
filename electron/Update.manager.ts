@@ -308,7 +308,6 @@ class UpdateManager {
   }
 
   async manageUpdates() {
-    return;
     if(this.updateInProgress) return;
     if(this.isGameRunning) return;
 
