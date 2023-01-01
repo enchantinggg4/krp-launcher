@@ -11,7 +11,6 @@ const NewsBlock = styled.div`
   flex-direction: column;
   max-height: 100%;
   
-  overflow-y: auto;
   & .title {
     font-size: 32px;
     margin-bottom: 10px;

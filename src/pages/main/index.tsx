@@ -17,6 +17,27 @@ const News = styled.div`
   flex: 1;
   padding-left: 10px;
   padding-right: 10px;
+  overflow-y: auto;
+  
+  // scrollbar-color: rebeccapurple green;
+  // scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 12px;               /* width of the entire scrollbar */
+  }
+  
+  &::-webkit-scrollbar-track {
+    // background: orange;        /* color of the tracking area */
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    // background-color: blue;    /* color of the scroll thumb */
+    // border-radius: 20px;       /* roundness of the scroll thumb */
+    // border: 3px solid orange;  /* creates padding around scroll thumb */
+  }
+  
 `
 const Dynmap = styled.iframe`
   width: 100%;
