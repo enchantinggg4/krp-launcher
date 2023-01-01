@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { CharacterPreview } from '../../components/CharacterPreview'
 import NewsBlock from "../../components/NewsBlock";
+import {UPDATER_URL} from "../../config";
 
 const MainPageContainer = styled.div`
   display: flex;
@@ -51,20 +52,24 @@ const CharacterWrapper = styled.div`
   margin-top: 100px;
 `
 
+interface New {
+  title: string;
+  content: string;
+  image: string;
+  id: string;
+}
+
 export default observer(() => {
+  const [news, setNews] = useState<New[]>([]);
+  useEffect(() => {
+    fetch(`${UPDATER_URL}/auth/news`).then(it => it.json()).then(n => {
+      setNews(n)
+    }).catch()
+  }, []);
   return (
     <MainPageContainer>
       <News>
-        <NewsBlock
-          title={'Я пукнул!'}
-          image={'https://media.discordapp.net/attachments/930178487778693163/1058102124803788961/image.png'}
-          content={`В мире Kingdom RPG поселились новые долгожданные существа, драконы.
-Драконы бывают двух типов - малые и великие.
-Великий дракон только один и он живет в центре карты на обсидиановом острове
-Малые драконы будут иногда нападать на поселения игроков, сжигая и уничтожая все на своем пути. 
-Всем известно, что драконы любят блестящие вещи, поэтому за убийство малого дракона вам может выпасть золото или артефакты, которые нельзя скрафтить. 
-P.S. Драконы очень сильные.`}
-        />
+        {news.map(it => <NewsBlock key={it.id} content={it.content} title={it.title} image={it.image} />)}
       </News>
       <CharacterWrapper>
         <CharacterPreview />
