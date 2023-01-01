@@ -4,6 +4,8 @@ import React, {useEffect, useState} from 'react'
 import { CharacterPreview } from '../../components/CharacterPreview'
 import NewsBlock from "../../components/NewsBlock";
 import {UPDATER_URL} from "../../config";
+import LayoutStore from '../../components/Layout/Layout.store';
+import { useHistory } from 'react-router-dom';
 
 const MainPageContainer = styled.div`
   display: flex;
@@ -61,6 +63,11 @@ interface New {
 
 export default observer(() => {
   const [news, setNews] = useState<New[]>([]);
+  const history = useHistory()
+
+  if(!LayoutStore.token)
+    history.push('/auth')
+
   useEffect(() => {
     fetch(`${UPDATER_URL}/auth/news`).then(it => it.json()).then(n => {
       setNews(n)
