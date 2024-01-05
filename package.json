@@ -1,8 +1,8 @@
 {
   "name": "kingdomrpg-launcher",
-  "productName": "Kingdom RPG",
+  "productName": "KingdomRPG",
   "version": "2.1.0",
-  "description": "Kingdom RPG",
+  "description": "KingdomRPG",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -14,7 +14,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "Kingdom RPG",
+    "name": "KingdomRPG",
     "email": "enchantinggg4@gmail.com"
   },
   "devContentSecurityPolicy": "connect-src",
