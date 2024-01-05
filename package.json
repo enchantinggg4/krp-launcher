@@ -1,8 +1,8 @@
 {
-  "name": "launcher",
-  "productName": "launcher",
+  "name": "kingdomrpg-launcher",
+  "productName": "Kingdom RPG",
   "version": "2.0.0",
-  "description": "My Electron application description",
+  "description": "Kingdom RPG",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "Yuri",
+    "name": "Kingdom RPG",
     "email": "enchantinggg4@gmail.com"
   },
   "devContentSecurityPolicy": "connect-src",

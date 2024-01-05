@@ -29,10 +29,9 @@ const setupUpdater = () => {
   });
 
 }
-
-if (!isDev) {
+if (!isDev)
   setupUpdater()
-}
+
 
 function handleSquirrelEvent() {
   if (process.argv.length === 1) {
