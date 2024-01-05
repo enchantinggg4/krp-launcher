@@ -1,19 +1,21 @@
 import EventEmitter from 'events'
 import LauncherDownload from './launcher_download'
 import { spawn } from 'child_process'
+import assert from 'assert'
 
+import extract from 'extract-zip'
+import { useSingleContext } from '../helper'
 
 const debug = console.log
 
 export default class WrapClient extends EventEmitter {
-    constructor(clientPath, version, os, java, javaArgs = [], maxMem = 1024, doneRegex = /\[.+\]: Narrator library successfully loaded/) {
+    constructor(clientPath, version, os, javaArgs = [], maxMem = 1024, doneRegex = /\[.+\]: Narrator library successfully loaded/) {
         super()
         this.clientPath = clientPath
         this.maxMem = maxMem
         this.doneRegex = doneRegex
         this.os = os;
         this.version = version
-        this.java = java
         this.javaArgs = javaArgs
         this.launcher = new LauncherDownload(this.clientPath, os)
         this.launcher.on('queue_state', (e) => this.emit('queue_state', e))
@@ -27,6 +29,57 @@ export default class WrapClient extends EventEmitter {
         // Update main class
         this.mainClass = version.mainClass
 
+    }
+
+
+    javaPath() {
+        return this.launcher.mcPath + '/runtime/java-runtime-gamma/windows/java-runtime-gamma/bin/java.exe'
+    }
+
+    javaversion() {
+        const path = this.javaPath()
+        return new Promise((resolve, reject) => {
+            var sp = spawn(path, ['-version']);
+            sp.on('error', function (err) {
+                reject();
+            })
+            sp.stderr.on('data', function (data) {
+                console.log(data.toString())
+                data = data.toString().split('\n')[0];
+                var javaVersion = new RegExp('openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                if (javaVersion != false) {
+                    // TODO: We have Java installed
+                    resolve(javaVersion);
+                } else {
+                    // TODO: No Java installed
+                    reject()
+                }
+            });
+        })
+    }
+
+    prepareJVM() {
+        const jvmLib = {
+            name: 'java-runtime-gamma.zip',
+            url: 'https://github.com/enchantinggg4/krp-launcher/raw/main/assets/java-runtime-gamma.zip',
+            size: 70348340,
+            sha1: '1d255bfd2c5ce99352632b3e6c4f3571fbb7d5e6'
+        }
+
+        return useSingleContext('prepareJvm', () => {
+            return this.javaversion().catch(() => {
+                console.log('No java...')
+                const path = this.launcher.mcPath + '/runtime/' + jvmLib.name
+                return this.launcher.downloadFile(jvmLib.url, path, jvmLib.size, jvmLib.sha1).then(() => {
+                    console.log('We got a file')
+                    // File is downloaded
+                    // We need to extract it now
+                    return extract(path, {
+                        dir: this.launcher.mcPath + '/runtime'
+                    })
+                })
+            }).then(() => this.javaversion()).then(jversion => assert.strictEqual('17.0.3', jversion))
+        })
     }
 
     prepare() {
@@ -43,7 +96,7 @@ export default class WrapClient extends EventEmitter {
 
     start(additionalArgs) {
         return new Promise((resolve) => {
-            const java = this.java
+            const java = this.javaPath()
             const maxRam = this.maxMem
             const maxNewSize = '128'
             const nativeLibraryPath = this.nativesPath

@@ -20,12 +20,11 @@ class UpdateManager {
     }
 
     constructor() {
-        const java = `C:\\Users\\parad\\AppData\\Roaming\\.minecraft\\runtime\\java-runtime-gamma\\windows\\java-runtime-gamma\\bin\\java`
         const javaArgs = [
             '-XX:-UseAdaptiveSizePolicy',
         ]
         this.isPreparing = false;
-        this.wrap = new WrapClient(this.getMinecraftPath(), this.getVersion(), this.getOs(), java, javaArgs);
+        this.wrap = new WrapClient(this.getMinecraftPath(), this.getVersion(), this.getOs(), javaArgs);
         this.wrap.on('queue_state', msg => {
             sendToWeb('prepare_state', msg)
         })

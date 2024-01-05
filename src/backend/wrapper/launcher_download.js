@@ -184,6 +184,7 @@ export default class LauncherDownload extends EventEmitter {
         this.emit('queue_state', state);
     }
 
+
     downloadFile(url, path, size, sha1) {
         assert.notStrictEqual(url, undefined)
         if (this.pathsPromises[path]) { return this.pathsPromises[path] }

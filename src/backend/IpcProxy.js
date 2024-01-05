@@ -18,19 +18,27 @@ export class IpcProxy {
 
 
     async ready() {
+        console.log('Getting ready')
+
+
         ConfigManager.loadConfig()
-        await UpdateManager.prepareGame()
         sendToWeb('version', app.getVersion())
 
-        javaversion().then(ver => {
-            console.log("My version is " + ver)
-        })
+        await Promise.all([
+            UpdateManager.prepareGame(),
+            UpdateManager.wrap.prepareJVM()
+        ])
+
     }
 
     async play() {
         console.log('Starting game')
+
         await UpdateManager.prepareGame();
+        await UpdateManager.wrap.prepareJVM()
         await UpdateManager.playGame()
+
+
     }
 
 
