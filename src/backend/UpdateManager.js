@@ -36,7 +36,7 @@ class UpdateManager {
     }
 
     getVersion() {
-        return '1.19.4'
+        return '1.19.2'
     }
 
     getOs() {

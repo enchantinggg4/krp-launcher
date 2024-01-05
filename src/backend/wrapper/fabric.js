@@ -1,6 +1,6 @@
 const j = {
-    id: 'fabric-loader-0.15.3-1.19.4',
-    inheritsFrom: '1.19.4',
+    id: 'fabric-loader-0.15.3-1.19.2',
+    inheritsFrom: '1.19.2',
     time: '2024-01-03T16:41:30+03:00',
     releaseTime: '2024-01-03T16:41:30+03:00',
     type: 'release',
@@ -45,10 +45,10 @@ const j = {
             size: 1451874
         },
         {
-            name: 'net.fabricmc:intermediary:1.19.4',
+            name: 'net.fabricmc:intermediary:1.19.2',
             url: 'https://maven.fabricmc.net/',
-            sha1: 'e9852a6227fd3dae2484d2368d0c6092ca438481',
-            size: 561002
+            sha1: '9264b892918b70d28a1cf8bc4c07fdc6a1463628',
+            size: 519553
         },
         {
             name: 'net.fabricmc:fabric-loader:0.15.3',
