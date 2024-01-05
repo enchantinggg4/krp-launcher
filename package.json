@@ -1,11 +1,12 @@
 {
   "name": "kingdomrpg-launcher",
   "productName": "Kingdom RPG",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Kingdom RPG",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
+    "release": "electron-forge make & electron-forge package",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
