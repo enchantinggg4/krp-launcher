@@ -1,6 +1,7 @@
 import { sendToWeb } from "../main"
 import ConfigManager from "./ConfigManager"
 import UpdateManager from "./UpdateManager"
+import { javaversion } from "./helper"
 
 const { shell, app } = require('electron')
 
@@ -20,6 +21,10 @@ export class IpcProxy {
         ConfigManager.loadConfig()
         await UpdateManager.prepareGame()
         sendToWeb('version', app.getVersion())
+
+        javaversion().then(ver => {
+            console.log("My version is " + ver)
+        })
     }
 
     async play() {
