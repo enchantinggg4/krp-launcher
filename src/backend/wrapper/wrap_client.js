@@ -5,6 +5,7 @@ import assert from 'assert'
 
 import extract from 'extract-zip'
 import { useSingleContext } from '../helper'
+import { mainWindow } from '../../main'
 
 const debug = console.log
 

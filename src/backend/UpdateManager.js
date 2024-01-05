@@ -2,7 +2,7 @@ import WrapClient from "./wrapper/wrap_client"
 import { app } from 'electron'
 import * as path from 'path'
 import fabric from './wrapper/fabric'
-import { sendToWeb } from "../main"
+import { mainWindow, sendToWeb } from "../main"
 import { isContextRunning, useSingleContext } from "./helper"
 import { isContext } from "vm"
 import ConfigManager from "./ConfigManager"
@@ -65,10 +65,15 @@ class UpdateManager {
 
         return useSingleContext('play', () => {
             sendToWeb('game_running', true)
+            mainWindow?.hide()
             return this.wrap.start({
                 accessToken: ConfigManager.config.username,
                 authToken: ConfigManager.config.token
-            }).then(() => sendToWeb('game_running', false))
+            }).then(() => {
+                sendToWeb('game_running', false)
+            }).finally(() => {
+                mainWindow?.show()
+            })
         })
 
     }
