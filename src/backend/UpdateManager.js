@@ -68,6 +68,7 @@ class UpdateManager {
             mainWindow?.hide()
             return this.wrap.start({
                 accessToken: ConfigManager.config.username,
+                username: ConfigManager.config.username,
                 authToken: ConfigManager.config.token
             }).then(() => {
                 sendToWeb('game_running', false)

@@ -6,7 +6,7 @@
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "release": "npm version patch & electron-forge make & electron-forge package",
+    "release": "npm version patch & electron-forge make",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
