@@ -150,6 +150,10 @@ export default class WrapClient extends EventEmitter {
                 stdio: 'pipe',
                 cwd: this.clientPath + '/..'
             })
+
+
+            log.info(`Full start command`)
+            log.info(`${java} ${args.join(' ')}`)
             this.client.addListener('close', resolve);
             this.client.stdin.setEncoding('utf8')
             this.client.stdout.setEncoding('utf8')

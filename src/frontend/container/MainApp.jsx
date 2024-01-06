@@ -94,7 +94,7 @@ const DiscordIcon = styled.div`
   &:hover {
     opacity: 1;
   }
-  background-image: url('${CDN_URL}/discord.svg');
+  background-image: url('https://cdn.discordapp.com/attachments/983849193376465006/1193216940412518521/discord-mascot.png?ex=65abe8df&is=659973df&hm=55d5c657af10e6cb6570ba7b023b50d7467dcbb4aaa8423aaaf12e12a8efa3a1&');
   background-size: contain;
   width: 40px;
   height: 40px;
@@ -109,7 +109,7 @@ const FolderIcon = styled.div`
   &:hover {
     opacity: 1;
   }
-  background-image: url('${CDN_URL}/folder.png');
+  background-image: url('https://cdn.discordapp.com/attachments/983849193376465006/1193217540177006693/folder-flat.png?ex=65abe96e&is=6599746e&hm=41becf738291e63180bd0b0af67182c635144e19dcaca282bbab0f03316e2f5d&');
   background-size: contain;
   width: 40px;
   height: 40px;
@@ -161,16 +161,20 @@ export const MainApp = observer(({ children }) => {
       {!store.token && <AuthDialog />}
 
       <BottomRow>
-        <LogFile onClick={() => { }}>Лог</LogFile>
+        <LogFile onClick={() => {
+          console.log('??')
+          electronProxy.showLogFile()
+        }}>Лог</LogFile>
         {showPlayButton && <PlayButton />}
 
+        <Spacer />
         <DiscordIcon
           onClick={() => {
             electronProxy.openLink('https://discord.gg/3DmvqWHGqU')
           }}
         />
         <FolderIcon
-          onClick={() => { }}
+          onClick={() => electronProxy.showGameFolder()}
         />
       </BottomRow>
 
