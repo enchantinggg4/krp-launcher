@@ -17,7 +17,6 @@ contextBridge.exposeInMainWorld('Main', {
             method,
             args
         }
-        console.log('send', JSON.stringify(packet))
         ipcRenderer.send('message', packet)
     },
     on: (channel, callback) => {

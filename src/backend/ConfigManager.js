@@ -45,7 +45,6 @@ class ConfigManager {
 
     sendUpdate() {
         sendToWeb('update_config', this.config)
-        console.log(this.config.username + ' < username')
     }
 
 }

@@ -4,7 +4,7 @@ import * as path from 'path'
 import fabric from './wrapper/fabric'
 import { mainWindow, sendToWeb } from "../main"
 import { isContextRunning, useSingleContext } from "./helper"
-import { isContext } from "vm"
+import log from 'electron-log'
 import ConfigManager from "./ConfigManager"
 class UpdateManager {
     APPDATA_DIR = '.kingdomrpg'
@@ -50,7 +50,7 @@ class UpdateManager {
                 sendToWeb('is_prepared', false);
                 await this.wrap.prepare()
                 await this.wrap.installFabric(fabric)
-                console.log('Game prepared')
+                log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
             });

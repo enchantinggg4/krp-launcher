@@ -3,6 +3,8 @@ import { IpcProxy } from './backend/IpcProxy'
 // index.js
 // import './backend/fetch-polyfill'
 
+import log from 'electron-log'
+
 const isDev = require('electron-is-dev')
 
 export let mainWindow
@@ -20,11 +22,11 @@ const setupUpdater = () => {
   autoUpdater.checkForUpdates()
 
   autoUpdater.addListener('update-available', () => {
-    console.log('[AutoUpdater] Update available!')
+    log.info('[AutoUpdater] Update available!')
     sendToWeb('update_available')
   });
   autoUpdater.addListener('update-downloaded', () => {
-    console.log('[AutoUpdater] Update downloaded')
+    log.info('[AutoUpdater] Update downloaded')
     sendToWeb('update_downloaded')
   });
 
@@ -137,7 +139,7 @@ if (handleSquirrelEvent()) {
     .on('ready', createWindow)
     .whenReady()
     .then(registerListeners)
-    .catch(e => console.error(e))
+    .catch(e => log.error(e))
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -154,7 +156,7 @@ if (handleSquirrelEvent()) {
 
 process.on('uncaughtException', function (error) {
   // Handle the error
-  console.log(error.stack)
+  log.error(error.stack)
 
 });
 

@@ -5,12 +5,11 @@ import assert from 'assert'
 
 import extract from 'extract-zip'
 import { useSingleContext } from '../helper'
-import { mainWindow } from '../../main'
 
-const debug = console.log
+import log from 'electron-log'
 
 export default class WrapClient extends EventEmitter {
-    constructor(clientPath, version, os, javaArgs = [], maxMem = 1024, doneRegex = /\[.+\]: Narrator library successfully loaded/) {
+    constructor(clientPath, version, os, javaArgs = [], maxMem = 4096, doneRegex = /\[.+\]: Narrator library successfully loaded/) {
         super()
         this.clientPath = clientPath
         this.maxMem = maxMem
@@ -45,7 +44,6 @@ export default class WrapClient extends EventEmitter {
                 reject();
             })
             sp.stderr.on('data', function (data) {
-                console.log(data.toString())
                 data = data.toString().split('\n')[0];
                 var javaVersion = new RegExp('openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
                 if (javaVersion != false) {
@@ -69,10 +67,10 @@ export default class WrapClient extends EventEmitter {
 
         return useSingleContext('prepareJvm', () => {
             return this.javaversion().catch(() => {
-                console.log('No java...')
+                log.info('No java found')
                 const path = this.launcher.mcPath + '/runtime/' + jvmLib.name
                 return this.launcher.downloadFile(jvmLib.url, path, jvmLib.size, jvmLib.sha1).then(() => {
-                    console.log('We got a file')
+                    log.info('JVM runtime downloaded')
                     // File is downloaded
                     // We need to extract it now
                     return extract(path, {
@@ -129,7 +127,6 @@ export default class WrapClient extends EventEmitter {
 
             const addArgs = Object.entries(additionalArgs).flatMap(([key, value]) => ([`--${key}`, value]))
 
-            console.log(addArgs)
             const args = [
                 '-Xmx' + maxRam + 'M',
                 ...this.javaArgs,
@@ -165,6 +162,12 @@ export default class WrapClient extends EventEmitter {
             function onData(data) {
                 buffer += data
                 const lines = buffer.split('\n')
+                lines.forEach(line => {
+                    const clean = line.trim()
+                    if (clean.length > 1) {
+                        log.info(clean)
+                    }
+                })
                 const len = lines.length - 1
                 for (let i = 0; i < len; ++i) {
                     self.client.emit('line', lines[i])

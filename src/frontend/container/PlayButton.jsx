@@ -63,7 +63,6 @@ export const PlayButton = observer(({ }) => {
 
 
   const play = useCallback(() => {
-    console.log("hey")
     electronProxy.play()
   })
 

@@ -1,15 +1,11 @@
 import { sendToWeb } from "../main"
 import ConfigManager from "./ConfigManager"
 import UpdateManager from "./UpdateManager"
-import { javaversion } from "./helper"
 
+import log from 'electron-log'
 const { shell, app } = require('electron')
 
 export class IpcProxy {
-    hello(w, h) {
-        console.log("hello", w, h)
-    }
-
 
     openLink(url) {
         shell.openExternal(url)
@@ -18,7 +14,7 @@ export class IpcProxy {
 
 
     async ready() {
-        console.log('Getting ready')
+        log.info('Getting game ready...')
 
 
         ConfigManager.loadConfig()
@@ -32,13 +28,11 @@ export class IpcProxy {
     }
 
     async play() {
-        console.log('Starting game')
+        log.info('Starting game...')
 
         await UpdateManager.prepareGame();
         await UpdateManager.wrap.prepareJVM()
         await UpdateManager.playGame()
-
-
     }
 
 
