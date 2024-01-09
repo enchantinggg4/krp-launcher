@@ -11,6 +11,9 @@ import { electronProxy } from '../ipc.js';
 import AuthDialog from '../modal/AuthDialog.jsx';
 import { observer } from 'mobx-react-lite';
 import store from '../store.js';
+import { CharacterPreview } from './CharacterPreview.jsx';
+import useSWR from 'swr';
+import NewsBlock from '../component/NewsBlock.jsx';
 
 export const CDN_URL = 'http://188.68.222.85'
 
@@ -40,7 +43,9 @@ const BackgroundImage = styled.div`
 
 const MainContent = styled.div`
   flex: 1;
-overflow: hidden;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
 `
 
 const Version = styled.div`
@@ -117,19 +122,32 @@ const FolderIcon = styled.div`
   cursor: pointer;
 `
 
-const SettingsButton = styled.div`
-  opacity: 0.5;
-  transition: 0.3s ease;
 
-  &:hover {
-    opacity: 1;
+const News = styled.div`
+  flex: 1;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow-y: auto;
+  
+  // scrollbar-color: rebeccapurple green;
+  // scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 12px;               /* width of the entire scrollbar */
   }
-  background-image: url('https://cdn-icons-png.flaticon.com/512/3953/3953226.png');
-  background-size: contain;
-  width: 40px;
-  height: 40px;
-  margin-right: 20px;
-  cursor: pointer;
+  
+  &::-webkit-scrollbar-track {
+    // background: orange;        /* color of the tracking area */
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    // background-color: blue;    /* color of the scroll thumb */
+    // border-radius: 20px;       /* roundness of the scroll thumb */
+    // border: 3px solid orange;  /* creates padding around scroll thumb */
+  }
+  
 `
 
 export const MainApp = observer(({ children }) => {
@@ -137,9 +155,20 @@ export const MainApp = observer(({ children }) => {
   const version = useEvent('version', '');
   // const showPlayButton = config.rulesAccepted == false
 
+
+  const { data } = useSWR('/auth/news')
+
+  console.log('b4', data)
+  const news = data && data.data || []
+  console.log('after', news)
+
+
   useEventCallback('update_available', () => NotificationManager.info("Доступно обновление, скачиваю...",))
   useEventCallback('update_downloaded', () => NotificationManager.success("Перезапусти лаунчер.", "Обновление скачено!",))
 
+
+  if (store.isInitialLoading)
+    return null;
 
   const showPlayButton = store.token;
 
@@ -150,11 +179,13 @@ export const MainApp = observer(({ children }) => {
       <BackgroundImage />
       <Version>{version}</Version>
       {/* <OnlineStatus>
-                Онлайн: 111/111
-            </OnlineStatus> */}
+        Онлайн: 111/111
+      </OnlineStatus> */}
       <MainContent>
-        {children}
-        {/*{LayoutStore.rulesAccepted ? (settings ? <Settings close={() => setSettings(false)} /> : <MainPage />) : <Rules />}*/}
+        <News>
+          {news.map(it => <NewsBlock key={it.id} content={it.content} title={it.title} image={it.image} />)}
+        </News>
+        <CharacterPreview />
       </MainContent>
 
 

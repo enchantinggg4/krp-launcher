@@ -37,6 +37,7 @@
     "style-loader": "^3.0.0"
   },
   "dependencies": {
+    "@wiicamp/react-minecraft-skin-viewer": "^1.0.6",
     "apisauce": "^3.0.1",
     "electron-fetch": "^1.9.1",
     "electron-is-dev": "^2.0.0",

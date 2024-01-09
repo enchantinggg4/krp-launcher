@@ -9,14 +9,20 @@ import { useSingleContext } from '../helper'
 import log from 'electron-log'
 
 export default class WrapClient extends EventEmitter {
-    constructor(clientPath, version, os, javaArgs = [], maxMem = 4096, doneRegex = /\[.+\]: Narrator library successfully loaded/) {
+    constructor(clientPath, version, os, javaArgs = [], maxMem = 8192, doneRegex = /\[.+\]: Narrator library successfully loaded/) {
         super()
         this.clientPath = clientPath
         this.maxMem = maxMem
         this.doneRegex = doneRegex
         this.os = os;
         this.version = version
-        this.javaArgs = javaArgs
+        this.javaArgs = [
+            '-XX:+OptimizeStringConcat',
+            '-XX:-OmitStackTraceInFastThrow',
+            '-Dfml.ignoreInvalidMinecraftCertificates=true',
+            '-XX:+UnlockExperimentalVMOptions',
+            '-XX:+AlwaysPreTouch'
+        ]
         this.launcher = new LauncherDownload(this.clientPath, os)
         this.launcher.on('queue_state', (e) => this.emit('queue_state', e))
     }

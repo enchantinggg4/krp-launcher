@@ -1,6 +1,9 @@
 module.exports = {
   packagerConfig: {
     asar: true,
+    "name": "KingdomRPG",
+    "executableName": "KingdomRPG",
+    "icon": "appicons/icons/png/icon.ico",
   },
   rebuildConfig: {},
   makers: [

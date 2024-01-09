@@ -1,4 +1,5 @@
 const { app, autoUpdater, BrowserWindow, ipcMain, shell } = require("electron")
+import ConfigManager from './backend/ConfigManager'
 import { IpcProxy } from './backend/IpcProxy'
 // index.js
 // import './backend/fetch-polyfill'
@@ -113,6 +114,8 @@ function createWindow() {
 
   if (isDev)
     mainWindow.webContents.openDevTools();
+
+  ConfigManager.loadConfig()
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 

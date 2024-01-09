@@ -9,7 +9,6 @@ class ConfigManager {
 
 
     loadConfig() {
-        log.info('hey ', path.join(app.getPath('userData'), 'config.json'))
         try {
             this.config = JSON.parse(
                 fs.readFileSync(
@@ -22,6 +21,7 @@ class ConfigManager {
             console.error('WHY??', e)
             this.config = {}
             this.save()
+            this.sendUpdate()
         }
     }
 
