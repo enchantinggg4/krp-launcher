@@ -13,7 +13,7 @@ root.render(
     <SWRConfig value={{
         fetcher(key, params) {
             console.log(key, params)
-            return api.get(key, params)
+            return api.get(key, params).then(it => it.data)
         }
     }}>
         <MainApp />

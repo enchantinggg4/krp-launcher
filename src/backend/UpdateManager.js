@@ -1,6 +1,7 @@
 import WrapClient from "./wrapper/wrap_client"
 import { app } from 'electron'
 import * as path from 'path'
+import * as fs from 'fs'
 import fabric from './wrapper/fabric'
 import { mainWindow, sendToWeb } from "../main"
 import { isContextRunning, useSingleContext } from "./helper"
@@ -56,6 +57,27 @@ class UpdateManager {
             });
         })
 
+    }
+
+    async injectConfig() {
+
+        const p = path.join(
+            this.getMinecraftPath(),
+            'config',
+            'kingdomrpg-client.json'
+        )
+        log.info(p)
+        log.info(JSON.stringify({ token: ConfigManager.config.token }))
+        if (!fs.existsSync(p)) {
+            fs.writeFileSync(
+                p,
+                JSON.stringify({ token: ConfigManager.config.token }),
+                { flag: 'w+' }
+            )
+        } else {
+            fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }))
+        }
+        log.info('Config injected with token');
     }
 
 

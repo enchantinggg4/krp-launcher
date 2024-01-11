@@ -38,28 +38,16 @@ const CharacterPreviewDiv = styled.div`
 `
 
 export const CharacterPreview = observer(() => {
-    const { data } = useSWR('/auth/me')
+    const { data, mutate } = useSWR('/auth/me')
 
-    const profile = data && data.data || store.profile;
+    const profile = data || store.profile;
 
 
     if (!profile) return null
-    const fraction = profile.profile.fraction
 
-    let url = (profile.profile.skinId && profile.profile.skinId !== '0') && `${UPDATER_URL}/skins/${profile.profile.skinId}` || undefined;
+    let url = profile.skinId && `${UPDATER_URL}/skins/${profile.username}.png?v=${profile.skinId}` || undefined;
 
     console.log(url)
-
-    if (!url) {
-        if (fraction == 'HUMAN') {
-            url =
-                `${UPDATER_URL}/skins/human_default.png`
-        } else if (fraction == 'ELF') {
-            url = `${UPDATER_URL}/skins/elf_default.png`
-        } else {
-            url = `${UPDATER_URL}/skins/dwarf_default.png`
-        }
-    }
 
     return (
         <CharacterPreviewDiv className="single">
@@ -67,10 +55,14 @@ export const CharacterPreview = observer(() => {
                 <MinecraftSkinViewer walk background={undefined} width={150} height={250} skin={url} />
             </div>
             <div className="option-name">
-                {profile.profile.username}
+                {profile.username}
             </div>
-            <FileUploader handleFile={(f) => {
-                store.uploadSkin(f)
+            <FileUploader handleFile={async (f) => {
+                const { path } = await store.uploadSkin(f)
+                mutate({
+                    ...(data || {}),
+                    skinId: path
+                })
             }} />
         </CharacterPreviewDiv>
     )

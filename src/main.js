@@ -160,10 +160,10 @@ if (handleSquirrelEvent()) {
 process.on('uncaughtException', function (error) {
   // Handle the error
   log.error(error.stack)
-
 });
 
 
 process.on('unhandledRejection', (reason, p) => {
-
+  log.error(reason)
+  log.error(p)
 });

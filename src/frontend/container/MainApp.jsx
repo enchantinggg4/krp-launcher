@@ -159,7 +159,7 @@ export const MainApp = observer(({ children }) => {
   const { data } = useSWR('/auth/news')
 
   console.log('b4', data)
-  const news = data && data.data || []
+  const news = data || []
   console.log('after', news)
 
 

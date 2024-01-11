@@ -57,6 +57,7 @@ class Store {
 
     async loadMe() {
         await api.get('/auth/me').then(it => {
+            console.log('eh ', it)
             if (it.ok) {
                 this.handleProfile(it.data)
             } else {
@@ -73,7 +74,7 @@ class Store {
         data.append("file", file);
 
         // IDK why api.post doesnt work and i dont seem to care as well
-        await fetch(`${UPDATER_URL}/user/setskin`, {
+        const res = await fetch(`${UPDATER_URL}/user/setskin`, {
             method: 'POST',
             body: data,
             headers: {
@@ -81,6 +82,8 @@ class Store {
             }
         })
         await this.loadMe();
+
+        return res.json()
     }
 }
 

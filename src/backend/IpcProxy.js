@@ -41,6 +41,7 @@ export class IpcProxy {
 
         await UpdateManager.prepareGame();
         await UpdateManager.wrap.prepareJVM()
+        await UpdateManager.injectConfig()
         await UpdateManager.playGame()
     }
 
