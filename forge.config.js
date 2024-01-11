@@ -3,13 +3,17 @@ module.exports = {
     asar: true,
     "name": "KingdomRPG",
     "executableName": "KingdomRPG",
-    "icon": "appicons/icons/png/icon.ico",
+    "icon": "appicons/icons/png/icon",
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        iconUrl: 'file://appicons/icons/png/icon.ico',
+        // The ICO file to use as the icon for the generated Setup.exe
+        setupIcon: 'appicons/icons/png/icon.ico'
+      },
     },
     {
       name: '@electron-forge/maker-zip',
