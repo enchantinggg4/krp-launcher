@@ -187,10 +187,10 @@ export default class LauncherDownload extends EventEmitter {
 
     downloadFile(url, path, size, sha1) {
         assert.notStrictEqual(url, undefined)
-        if (this.pathsPromises[path]) { return this.pathsPromises[path] }
+        if (this.pathsPromises[path]) return this.pathsPromises[path]
         const p = checkFile(path, size, sha1)
             .catch(err => {
-                debug(err)
+                // debug(err)
                 const parts = path.split('/')
                 parts.pop()
                 const dirPath = parts.join('/')

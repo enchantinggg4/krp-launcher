@@ -61,6 +61,9 @@ export const PlayButton = observer(({ }) => {
   const percentage = left / (total + 1) * 100
 
 
+  const stillDownloading = data.total > 0
+
+
 
   const play = useCallback(() => {
     electronProxy.play()
@@ -74,7 +77,7 @@ export const PlayButton = observer(({ }) => {
     label = 'Запускаем...'
   }
 
-  return <PButton disabled={store.isRunning || !store.isPrepared} onClick={play}>
+  return <PButton disabled={store.isRunning || !store.isPrepared || stillDownloading} onClick={play}>
     {!store.isPrepared && <LoadBar style={{ width: `${percentage}%` }} />}
     {label}
   </PButton>

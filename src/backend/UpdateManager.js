@@ -7,6 +7,7 @@ import { mainWindow, sendToWeb } from "../main"
 import { isContextRunning, useSingleContext } from "./helper"
 import log from 'electron-log'
 import ConfigManager from "./ConfigManager"
+import { UPDATER_URL } from "../frontend/config"
 class UpdateManager {
     APPDATA_DIR = '.kingdomrpg'
 
@@ -29,6 +30,14 @@ class UpdateManager {
         this.wrap.on('queue_state', msg => {
             sendToWeb('prepare_state', msg)
         })
+
+        setInterval(async () => {
+            if (isContextRunning('prepare') || isContextRunning('play')) {
+                return;
+            }
+            await this.prepareMods()
+
+        }, 10_000)
     }
 
     getMinecraftPath() {
@@ -49,8 +58,12 @@ class UpdateManager {
         return useSingleContext('prepare', () => {
             return new Promise(async (resolve, reject) => {
                 sendToWeb('is_prepared', false);
-                await this.wrap.prepare()
-                await this.wrap.installFabric(fabric)
+
+                await Promise.all([
+                    this.wrap.prepare(),
+                    this.wrap.installFabric(fabric),
+                    this.prepareMods()
+                ])
                 log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
@@ -80,6 +93,40 @@ class UpdateManager {
         log.info('Config injected with token');
     }
 
+    async prepareMods() {
+        // TODO: uncomment return when releasing to pips
+        return;
+        await useSingleContext('prepareMods', async () => {
+            let res = await fetch(`${UPDATER_URL}/updater/pack`).then(it => it.json())
+
+            res = res.map(it => ({
+                ...it,
+                url: `${UPDATER_URL}/static/${it.name}`,
+                path: path.join(this.getMinecraftPath(), 'mods', it.name)
+            }))
+            const getMod = (artifact) => {
+                const { url, path, size, sha1 } = artifact
+                return this.wrap.launcher.downloadFile(url, path, size, sha1)
+            }
+
+            const mods = res.map(async (mod) => getMod(mod));
+
+            // Delete all extra
+            const listOfAllMods = fs.readdirSync(path.join(this.getMinecraftPath(), 'mods'));
+
+            const cleans = listOfAllMods.filter(it => it.endsWith('jar')).map(it => {
+                if (!res.find(good => good.name == it)) {
+                    return fs.promises.unlink(path.join(this.getMinecraftPath(), 'mods', it))
+                }
+                return null
+            }).filter(Boolean)
+
+            await Promise.all(cleans)
+
+            const updatedMods = await Promise.all(mods)
+            console.log(`Mod sync complete for ${updatedMods.length} mods`)
+        })
+    }
 
     async playGame() {
         if (isContextRunning('prepare'))
