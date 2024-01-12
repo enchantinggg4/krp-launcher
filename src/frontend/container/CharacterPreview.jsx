@@ -45,7 +45,7 @@ export const CharacterPreview = observer(() => {
 
     if (!profile) return null
 
-    let url = profile.skinId && `${UPDATER_URL}/skins/${profile.username}.png?v=${profile.skinId}` || undefined;
+    let url = profile.skinId && `${UPDATER_URL}/skins/${profile.skinId}` || undefined;
 
     console.log(url)
 
