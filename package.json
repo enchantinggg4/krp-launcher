@@ -1,7 +1,7 @@
 {
   "name": "kingdomrpg-launcher",
   "productName": "KingdomRPG",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "KingdomRPG",
   "main": ".webpack/main",
   "scripts": {
