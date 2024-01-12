@@ -60,8 +60,8 @@ class UpdateManager {
                 sendToWeb('is_prepared', false);
                 await this.wrap.prepare()
                 await this.wrap.installFabric(fabric)
-                await this.prepareMods()
-                log.info('Game prepared')
+                await
+                    log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
             });
