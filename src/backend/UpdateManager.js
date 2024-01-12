@@ -58,12 +58,9 @@ class UpdateManager {
         return useSingleContext('prepare', () => {
             return new Promise(async (resolve, reject) => {
                 sendToWeb('is_prepared', false);
-
-                await Promise.all([
-                    this.wrap.prepare(),
-                    this.wrap.installFabric(fabric),
-                    this.prepareMods()
-                ])
+                await this.wrap.prepare()
+                await this.wrap.installFabric(fabric)
+                await this.prepareMods()
                 log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
