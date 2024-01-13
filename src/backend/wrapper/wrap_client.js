@@ -28,7 +28,6 @@ export default class WrapClient extends EventEmitter {
     }
 
     async installFabric(version) {
-        console.log(version);
         // Install libraries
         await this.launcher._getLibraries(version.libraries).then(libraries => {
             this.additionalLibraries = libraries;

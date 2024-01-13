@@ -60,8 +60,8 @@ class UpdateManager {
                 sendToWeb('is_prepared', false);
                 await this.wrap.prepare()
                 await this.wrap.installFabric(fabric)
-                await
-                    log.info('Game prepared')
+                await this.prepareMods()
+                log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
             });
@@ -70,6 +70,11 @@ class UpdateManager {
     }
 
     async injectConfig() {
+
+        // Create config folder if fresh run
+        const dir = path.join(this.getMinecraftPath(), 'config')
+        if (!fs.existsSync(dir))
+            fs.mkdirSync(dir, true)
 
         const p = path.join(
             this.getMinecraftPath(),
@@ -91,8 +96,6 @@ class UpdateManager {
     }
 
     async prepareMods() {
-        // TODO: uncomment return when releasing to pips
-        return;
         await useSingleContext('prepareMods', async () => {
             let res = await fetch(`${UPDATER_URL}/updater/pack`).then(it => it.json())
 
