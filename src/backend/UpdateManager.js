@@ -72,9 +72,7 @@ class UpdateManager {
     async injectConfig() {
 
         // Create config folder if fresh run
-        const dir = path.join(this.getMinecraftPath(), 'config')
-        if (!fs.existsSync(dir))
-            fs.mkdirSync(dir, true)
+        this.createDir('config')
 
         const p = path.join(
             this.getMinecraftPath(),
@@ -97,6 +95,8 @@ class UpdateManager {
 
     async prepareMods() {
         await useSingleContext('prepareMods', async () => {
+            this.createDir('mods')
+
             let res = await fetch(`${UPDATER_URL}/updater/pack`).then(it => it.json())
 
             res = res.map(it => ({
@@ -153,6 +153,12 @@ class UpdateManager {
         await this.wrap.stop().then(() => sendToWeb('game_state', false))
     }
 
+
+    createDir(name) {
+        const dir = path.join(this.getMinecraftPath(), name)
+        if (!fs.existsSync(dir))
+            fs.mkdirSync(dir, true)
+    }
 }
 
 export default new UpdateManager();
