@@ -1,14 +1,17 @@
 import styled from "styled-components";
 
 import React from 'react'
+
 const ModalBackground = styled.div`
   position: fixed;
   left: 0;
   top: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  
+  z-index: 10;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('/static/splash.png');
+  background-size: cover;
+
 `
 
 const ModalBody = styled.div`

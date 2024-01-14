@@ -13,7 +13,7 @@ const PButton = styled.button`
   left: 0;
   right: 0;
   cursor: pointer;
-  width: 200px;
+  width: 260px;
   font-size: 24px;
   background-color: #0c618f; /* Green */
   border: none;
@@ -72,7 +72,17 @@ export const PlayButton = observer(({ }) => {
   let label = 'Играть'
 
   if (!store.isPrepared) {
-    label = 'Обновляем...'
+    if (data.comment == "game") {
+      label = "Обновление игры..."
+    } else if (data.comment == "mods") {
+      label = "Обновление модов..."
+    } else if (data.comment == "fabric") {
+      label = "Обновление fabric..."
+    } else if (data.comment == "config") {
+      label = "Конфигурация..."
+    } else {
+      label = 'Обновление...'
+    }
   } else if (store.isRunning) {
     label = 'Запускаем...'
   }

@@ -15,8 +15,6 @@ import { CharacterPreview } from './CharacterPreview.jsx';
 import useSWR from 'swr';
 import NewsBlock from '../component/NewsBlock.jsx';
 
-export const CDN_URL = 'http://188.68.222.85'
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -28,10 +26,9 @@ const Container = styled.div`
 
 const BackgroundImage = styled.div`
   z-index: -1;
-  //background-image: url('https://cdn.discordapp.com/attachments/800081672813019196/938170343552581735/unknown.png');
-  background-image: url('https://cdn.discordapp.com/attachments/930178487778693163/1057800413824434176/3ebc88985701fafc.png');
+  background-image: url('/static/splash.png');
   background-size: cover;
-  opacity: 0.1;
+  opacity: 0.4;
   width: 100vw;
   height: 100vh;
   position: absolute;

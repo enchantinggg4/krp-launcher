@@ -58,15 +58,26 @@ class UpdateManager {
         return useSingleContext('prepare', () => {
             return new Promise(async (resolve, reject) => {
                 sendToWeb('is_prepared', false);
-                await this.wrap.prepare()
-                await this.wrap.installFabric(fabric)
+                this.wrap.launcher.comment = "game"
+                await this.wrap.prepare();
+
+                await this.installFabric();
+
                 await this.prepareMods()
+
+                await this.createMissingConfigs()
                 log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
             });
         })
 
+    }
+
+
+    async installFabric() {
+        this.wrap.launcher.comment = "fabric"
+        await this.wrap.installFabric(fabric)
     }
 
     async injectConfig() {
@@ -93,15 +104,34 @@ class UpdateManager {
         log.info('Config injected with token');
     }
 
+
+    async createMissingConfigs() {
+        log.info(`Fetching configs...`)
+
+        this.wrap.launcher.comment = "config"
+        const res = await fetch(`${UPDATER_URL}/static/defaultConfig.json`).then(it => it.json())
+
+        const getConfig = (artifact) => {
+            const { url, } = artifact
+            const p = path.join(this.getMinecraftPath(), artifact.path)
+            console.log(url, p)
+            return this.wrap.launcher.downloadFile(`${UPDATER_URL}${url}`, p)
+        }
+
+        await Promise.all(res.map(async (config) => getConfig(config)))
+        log.info(`Created missing configs`)
+    }
+
     async prepareMods() {
         await useSingleContext('prepareMods', async () => {
             this.createDir('mods')
+            this.wrap.launcher.comment = "mods"
 
             let res = await fetch(`${UPDATER_URL}/updater/pack`).then(it => it.json())
 
             res = res.map(it => ({
                 ...it,
-                url: `${UPDATER_URL}/static/${it.name}`,
+                url: `${UPDATER_URL}/static/mods/${it.name}`,
                 path: path.join(this.getMinecraftPath(), 'mods', it.name)
             }))
             const getMod = (artifact) => {
@@ -123,8 +153,10 @@ class UpdateManager {
 
             await Promise.all(cleans)
 
+            log.info(`Removed ${cleans.length} unwanted mods`)
+
             const updatedMods = await Promise.all(mods)
-            console.log(`Mod sync complete for ${updatedMods.length} mods`)
+            log.info(`Mod sync complete for ${updatedMods.length} mods`)
         })
     }
 

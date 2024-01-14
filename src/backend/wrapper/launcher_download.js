@@ -7,9 +7,12 @@ import Queue from 'promise-queue'
 import flatmap from 'flatmap'
 import extract from 'extract-zip'
 import { mkdirp } from 'mkdirp'
-// http://wiki.vg/Game_files
+import log from 'electron-log'
 
-const debug = console.log
+import * as ppath from 'path'
+
+
+// http://wiki.vg/Game_files
 
 export default class LauncherDownload extends EventEmitter {
     // linux,osx or windows
@@ -23,6 +26,7 @@ export default class LauncherDownload extends EventEmitter {
         this.assetIndexes = {}
         this.failed = 0;
         this.maxTotal = 0;
+        this.comment = "generic"
     }
 
     getWholeClient(version) {
@@ -179,7 +183,8 @@ export default class LauncherDownload extends EventEmitter {
             total: this.queue.getQueueLength(),
             pending: this.queue.getPendingLength(),
             failed: this.failed,
-            done: false
+            done: false,
+            comment: this.comment
         }
         this.emit('queue_state', state);
     }
@@ -198,6 +203,7 @@ export default class LauncherDownload extends EventEmitter {
                     .then(() => {
                         const p = this.queue.add(() => new Promise((resolve, reject) => {
                             fetch(url).then(res => {
+                                this.createParentDirectories(path);
                                 const fileStream = fs.createWriteStream(path)
                                 res.body.pipe(fileStream)
                                 res.body.on('error', err => {
@@ -206,6 +212,7 @@ export default class LauncherDownload extends EventEmitter {
                                     this.queue_state()
                                 })
                                 fileStream.on('finish', () => {
+                                    log.verbose(`Fininshed downloading file ${path}`)
                                     resolve()
                                     this.queue_state()
                                 })
@@ -221,6 +228,16 @@ export default class LauncherDownload extends EventEmitter {
         this.pathsPromises[path] = p
         return p
     }
+
+
+    createParentDirectories(filePath) {
+        var dirname = ppath.dirname(filePath);
+        if (fs.existsSync(dirname)) {
+            return true;
+        }
+        this.createParentDirectories(dirname);
+        fs.mkdirSync(dirname);
+    }
 }
 
 
@@ -231,3 +248,6 @@ function checkFile(path, size, sha1) {
         .then(data => assert.strictEqual(crypto.createHash('sha1').update(data).digest('hex'), sha1, 'wrong sha1 for ' + path))
         .then(() => path)
 }
+
+
+

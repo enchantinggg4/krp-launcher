@@ -104,6 +104,7 @@ function createWindow() {
     width: 1100,
     height: 700,
     backgroundColor: '#191622',
+    icon: "./appicons/icons/png/64x64.png",
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

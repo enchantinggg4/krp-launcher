@@ -1,5 +1,6 @@
 import { makeObservable, observable } from 'mobx'
 import { UPDATER_URL, api, setToken } from './config'
+import { electronProxy } from './ipc'
 
 class Store {
 
@@ -26,9 +27,13 @@ class Store {
         window.Main.on('update_config', d => {
             this.isInitialLoading = false
             this.token = d.token
-            setToken(this.token)
-            this.loadMe();
-            console.log('Update config ', d)
+
+            if (this.token != d.token) {
+                setToken(this.token)
+                this.loadMe();
+
+                console.log('Update config ', d)
+            }
 
         })
 
@@ -48,11 +53,10 @@ class Store {
     logout() {
         this.token = undefined
         api.deleteHeader('Authorization')
-        profile = undefined
-        window.Main.sendMessage({
-            type: 'update_token',
-            token: undefined,
-        })
+        this.profile = undefined
+        electronProxy.updateConfig({
+            token: undefined
+        });
     }
 
     async loadMe() {
