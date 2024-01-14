@@ -9,7 +9,7 @@ const ModalBackground = styled.div`
   right: 0;
   bottom: 0;
   z-index: 10;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('/static/splash.png');
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('static:///static/splash.png');
   background-size: cover;
 
 `

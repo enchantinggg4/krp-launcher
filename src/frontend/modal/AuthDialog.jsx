@@ -43,6 +43,15 @@ const AuthMethodSwitch = styled.div`
 
 
 
+const Test = styled.img`
+position:fixed;
+left: 0;
+top:0;
+right:0;
+bottom: 0;`
+
+
+
 export default observer(() => {
     const config = useState('update_config', {})
     const [isRegister, setIsRegister] = useState(true)

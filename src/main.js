@@ -1,6 +1,7 @@
-const { app, autoUpdater, BrowserWindow, ipcMain, shell } = require("electron")
+const { app, autoUpdater, BrowserWindow, ipcMain, shell, session } = require("electron")
 import ConfigManager from './backend/ConfigManager'
 import { IpcProxy } from './backend/IpcProxy'
+import * as path from "path"
 // index.js
 // import './backend/fetch-polyfill'
 
@@ -98,6 +99,9 @@ function handleSquirrelEvent() {
   }
 }
 
+
+
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     // icon: path.join(assetsPath, 'assets', 'icon.png'),
@@ -112,6 +116,14 @@ function createWindow() {
     },
   })
   mainWindow.removeMenu()
+
+  session.defaultSession.protocol.registerFileProtocol('static', (request, callback) => {
+    const fileUrl = request.url.replace('static://', '');
+    log.info("HANDLE?>", fileUrl)
+    const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl);
+    log.info("Oh man ", filePath)
+    callback(filePath);
+  });
 
   if (isDev)
     mainWindow.webContents.openDevTools();
