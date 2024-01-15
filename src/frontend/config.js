@@ -4,8 +4,9 @@ import { configure } from "mobx"
 configure({
     enforceActions: "never"
 })
-export const UPDATER_URL = 'http://84.38.180.50:3300'
-export const CDN_URL = 'http://188.68.222.85'
+
+// API
+export const UPDATER_URL = 'http://84.38.180.50'
 
 
 export const api = create({

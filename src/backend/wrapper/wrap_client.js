@@ -193,9 +193,12 @@ export default class WrapClient extends EventEmitter {
             function onLine(line) {
                 const regex = self.doneRegex
 
+                const gameLaunchingRegex = /Setting user/
+
                 if (regex.test(line)) {
                     self.client.removeListener('line', onLine)
                 }
+
             }
 
 

@@ -155,10 +155,7 @@ export const MainApp = observer(({ children }) => {
 
   const { data } = useSWR('/auth/news')
 
-  console.log('b4', data)
   const news = data || []
-  console.log('after', news)
-
 
   useEventCallback('update_available', () => NotificationManager.info("Доступно обновление, скачиваю...",))
   useEventCallback('update_downloaded', () => NotificationManager.success("Перезапусти лаунчер.", "Обновление скачено!",))
@@ -189,10 +186,7 @@ export const MainApp = observer(({ children }) => {
       {!store.token && <AuthDialog />}
 
       <BottomRow>
-        <LogFile onClick={() => {
-          console.log('??')
-          electronProxy.showLogFile()
-        }}>Лог</LogFile>
+        <LogFile onClick={() => electronProxy.showLogFile()}>Лог</LogFile>
         {showPlayButton && <PlayButton />}
 
         <Spacer />

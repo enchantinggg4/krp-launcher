@@ -47,8 +47,6 @@ export const CharacterPreview = observer(() => {
 
     let url = profile.skinId && `${UPDATER_URL}/skins/${profile.skinId}` || 'static:///static/steve.png';
 
-    console.log(url)
-
     return (
         <CharacterPreviewDiv className="single">
             <div className='skin-render-holder'>

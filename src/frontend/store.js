@@ -26,9 +26,9 @@ class Store {
 
         window.Main.on('update_config', d => {
             this.isInitialLoading = false
-            this.token = d.token
 
             if (this.token != d.token) {
+                this.token = d.token
                 setToken(this.token)
                 this.loadMe();
 
@@ -61,19 +61,17 @@ class Store {
 
     async loadMe() {
         await api.get('/auth/me').then(it => {
-            console.log('eh ', it)
-            if (it.ok) {
+            if (it.ok)
                 this.handleProfile(it.data)
-            } else {
+            else
                 this.logout()
-            }
+
         }).catch(e => {
             this.logout()
         });
     }
 
     async uploadSkin(file) {
-        console.log(file)
         const data = new FormData();
         data.append("file", file);
 

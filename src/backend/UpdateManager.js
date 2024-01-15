@@ -35,7 +35,7 @@ class UpdateManager {
             if (isContextRunning('prepare') || isContextRunning('play')) {
                 return;
             }
-            await this.prepareMods()
+            await this.preparePatch()
 
         }, 10_000)
     }
@@ -59,13 +59,13 @@ class UpdateManager {
             return new Promise(async (resolve, reject) => {
                 sendToWeb('is_prepared', false);
                 this.wrap.launcher.comment = "game"
+                // Install game
                 await this.wrap.prepare();
-
+                // Install fabric
                 await this.installFabric();
-
-                await this.prepareMods()
-
-                await this.createMissingConfigs()
+                // Install stuff from updater
+                this.wrap.launcher.comment = "game"
+                await this.preparePatch();
                 log.info('Game prepared')
                 sendToWeb('is_prepared', true);
                 resolve();
@@ -105,41 +105,23 @@ class UpdateManager {
     }
 
 
-    async createMissingConfigs() {
-        log.info(`Fetching configs...`)
-
-        this.wrap.launcher.comment = "config"
-        const res = await fetch(`${UPDATER_URL}/static/defaultConfig.json`).then(it => it.json())
-
-        const getConfig = (artifact) => {
-            const { url, } = artifact
-            const p = path.join(this.getMinecraftPath(), artifact.path)
-            console.log(url, p)
-            return this.wrap.launcher.downloadFile(`${UPDATER_URL}${url}`, p)
-        }
-
-        await Promise.all(res.map(async (config) => getConfig(config)))
-        log.info(`Created missing configs`)
-    }
-
-    async prepareMods() {
+    async preparePatch() {
         await useSingleContext('prepareMods', async () => {
             this.createDir('mods')
-            this.wrap.launcher.comment = "mods"
 
             let res = await fetch(`${UPDATER_URL}/updater/pack`).then(it => it.json())
 
             res = res.map(it => ({
                 ...it,
-                url: `${UPDATER_URL}/static/mods/${it.name}`,
-                path: path.join(this.getMinecraftPath(), 'mods', it.name)
+                url: `${UPDATER_URL}/static/${it.path}`,
+                path: path.join(this.getMinecraftPath(), it.path)
             }))
-            const getMod = (artifact) => {
+            const getAsset = (artifact) => {
                 const { url, path, size, sha1 } = artifact
                 return this.wrap.launcher.downloadFile(url, path, size, sha1)
             }
 
-            const mods = res.map(async (mod) => getMod(mod));
+            const mods = res.map(async (mod) => getAsset(mod));
 
             // Delete all extra
             const listOfAllMods = fs.readdirSync(path.join(this.getMinecraftPath(), 'mods'));
@@ -155,8 +137,14 @@ class UpdateManager {
 
             log.info(`Removed ${cleans.length} unwanted mods`)
 
-            const updatedMods = await Promise.all(mods)
-            log.info(`Mod sync complete for ${updatedMods.length} mods`)
+            try {
+                const updatedMods = await Promise.all(mods)
+                log.info(`Mod sync complete for ${updatedMods.length} mods`)
+            }
+            catch (e) {
+                log.error(`There was issue updating: `)
+                log.error(e)
+            }
         })
     }
 

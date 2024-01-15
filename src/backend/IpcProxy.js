@@ -23,7 +23,7 @@ export class IpcProxy {
     }
 
     async ready() {
-        log.info('Getting game ready...')
+        log.info('IpcProxy.ready() start')
 
 
         ConfigManager.loadConfig()
@@ -34,6 +34,7 @@ export class IpcProxy {
             UpdateManager.wrap.prepareJVM()
         ])
 
+        log.info('IpcProxy.ready() done')
     }
 
     async play() {
