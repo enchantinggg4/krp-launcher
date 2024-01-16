@@ -6,7 +6,7 @@ configure({
 })
 
 // API
-export const UPDATER_URL = 'http://84.38.180.50'
+export const UPDATER_URL = 'http://178.208.77.45'
 
 
 export const api = create({

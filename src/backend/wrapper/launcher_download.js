@@ -11,7 +11,23 @@ import log from 'electron-log'
 
 import * as ppath from 'path'
 
+function wait(delay) {
+    return new Promise((resolve) => setTimeout(resolve, delay));
+}
 
+function fetchRetry(url, delay, tries, fetchOptions = {}) {
+    function onError(err) {
+        const triesLeft = tries - 1;
+        if (triesLeft <= 0) {
+            throw err;
+        }
+        return wait(delay).then(() => {
+            log.info(`Failed to fetch ${url}, retrying`)
+            return fetchRetry(url, delay, triesLeft, fetchOptions)
+        });
+    }
+    return fetch(url, fetchOptions).catch(onError);
+}
 // http://wiki.vg/Game_files
 
 export default class LauncherDownload extends EventEmitter {
@@ -202,7 +218,7 @@ export default class LauncherDownload extends EventEmitter {
                 return mkdirp(dirPath)
                     .then(() => {
                         const p = this.queue.add(() => new Promise((resolve, reject) => {
-                            fetch(url).then(res => {
+                            fetchRetry(url, 1000, 3).then(res => {
                                 this.createParentDirectories(path);
                                 const fileStream = fs.createWriteStream(path)
                                 res.body.pipe(fileStream)

@@ -90,16 +90,20 @@ class UpdateManager {
             'config',
             'kingdomrpg-client.json'
         )
+        const cfg = {
+            token: ConfigManager.config.token,
+            baseUrl: UPDATER_URL
+        }
         log.info(p)
-        log.info(JSON.stringify({ token: ConfigManager.config.token }))
+        log.info(JSON.stringify(cfg))
         if (!fs.existsSync(p)) {
             fs.writeFileSync(
                 p,
-                JSON.stringify({ token: ConfigManager.config.token }),
+                JSON.stringify(cfg),
                 { flag: 'w+' }
             )
         } else {
-            fs.writeFileSync(p, JSON.stringify({ token: ConfigManager.config.token }))
+            fs.writeFileSync(p, JSON.stringify(cfg))
         }
         log.info('Config injected with token');
     }
