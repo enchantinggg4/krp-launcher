@@ -110,6 +110,10 @@ class UpdateManager {
 
 
     async preparePatch() {
+        if (ConfigManager.config.disableModSync) {
+            log.info("Ignoring patching(config set)")
+            return Promise.resolve();
+        }
         await useSingleContext('prepareMods', async () => {
             this.createDir('mods')
 
@@ -164,8 +168,10 @@ class UpdateManager {
                 username: ConfigManager.config.username,
                 authToken: ConfigManager.config.token
             }).then(() => {
+                log.info('Game closed')
                 sendToWeb('game_running', false)
             }).finally(() => {
+                log.info('Re-opening launcher')
                 mainWindow?.show()
             })
         })
