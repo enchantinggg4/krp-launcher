@@ -9,6 +9,7 @@ class Store {
 
     isRunning = false
     isPrepared = false
+    isLaunching = false
 
 
 
@@ -19,6 +20,7 @@ class Store {
         makeObservable(this, {
             token: observable,
             isRunning: observable,
+            isLaunching: observable,
             isPrepared: observable,
             profile: observable,
             isInitialLoading: observable
@@ -39,6 +41,10 @@ class Store {
 
         window.Main.on('game_running', d => {
             this.isRunning = d;
+        });
+
+        window.Main.on('game_launching', d => {
+            this.isLaunching = d;
         })
 
         window.Main.on('is_prepared', d => {

@@ -176,6 +176,11 @@ export default class WrapClient extends EventEmitter {
                     const clean = line.trim()
                     if (clean.length > 1) {
                         log.info(clean)
+                        const isok = line.includes("[voicechat] Loading Opus")
+                        if (isok) {
+                            log.info("Telling launcher to hide")
+                            self.emit("game-window-show")
+                        }
                     }
                 })
                 const len = lines.length - 1

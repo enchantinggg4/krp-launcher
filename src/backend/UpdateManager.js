@@ -161,8 +161,17 @@ class UpdateManager {
             return;
 
         return useSingleContext('play', () => {
-            sendToWeb('game_running', true)
-            mainWindow?.hide()
+
+
+            const listener = () => {
+                log.info("Received game-window-show event, hiding launcher");
+                mainWindow?.hide();
+                sendToWeb('game_launching', false)
+                sendToWeb('game_running', true)
+            }
+            this.wrap.addListener("game-window-show", listener);
+
+            sendToWeb('game_launching', true)
             return this.wrap.start({
                 accessToken: ConfigManager.config.username,
                 username: ConfigManager.config.username,
@@ -170,9 +179,13 @@ class UpdateManager {
             }).then(() => {
                 log.info('Game closed')
                 sendToWeb('game_running', false)
+                sendToWeb('game_launching', false)
             }).finally(() => {
+                sendToWeb('game_running', false);
+                sendToWeb('game_launching', false)
                 log.info('Re-opening launcher')
-                mainWindow?.show()
+                mainWindow?.show();
+                this.wrap.removeListener(listener);
             })
         })
 

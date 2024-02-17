@@ -84,10 +84,12 @@ export const PlayButton = observer(({ }) => {
       label = 'Обновление...'
     }
   } else if (store.isRunning) {
+    label = 'Игра запущена.'
+  } else if (store.isLaunching) {
     label = 'Запускаем...'
   }
 
-  return <PButton disabled={store.isRunning || !store.isPrepared || stillDownloading} onClick={play}>
+  return <PButton disabled={store.isRunning || store.isLaunching || !store.isPrepared || stillDownloading} onClick={play}>
     {!store.isPrepared && <LoadBar style={{ width: `${percentage}%` }} />}
     {label}
   </PButton>
