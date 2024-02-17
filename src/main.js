@@ -101,7 +101,6 @@ function handleSquirrelEvent() {
 
 
 
-
 function createWindow() {
   mainWindow = new BrowserWindow({
     // icon: path.join(assetsPath, 'assets', 'icon.png'),
@@ -151,23 +150,45 @@ async function registerListeners() {
 if (handleSquirrelEvent()) {
   // squirrel event handled and app will exit in 1000ms, so don't do anything else
 } else {
-  app
-    .on('ready', createWindow)
-    .whenReady()
-    .then(registerListeners)
-    .catch(e => log.error(e))
 
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
-  })
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
+
+  const gotTheLock = app.requestSingleInstanceLock({});
+
+  if (!gotTheLock) {
+    app.quit()
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory, additionalData) => {
+      // Print out data received from the second instance.
+      console.log(additionalData)
+
+      // Someone tried to run a second instance, we should focus our window.
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.focus()
+      }
+    })
+
+    app
+      .on('ready', createWindow)
+      .whenReady()
+      .then(registerListeners)
+      .catch(e => log.error(e))
+
+    app.on('window-all-closed', () => {
+      if (process.platform !== 'darwin') {
+        app.quit()
+      }
+    })
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow()
+      }
+    })
+  }
+
+
 }
 
 process.on('uncaughtException', function (error) {
