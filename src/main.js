@@ -165,6 +165,8 @@ if (handleSquirrelEvent()) {
       // Someone tried to run a second instance, we should focus our window.
       if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore()
+        // if we are hidden (game running) show window let it be
+        if (!mainWindow.isVisible()) mainWindow.show()
         mainWindow.focus()
       }
     })
