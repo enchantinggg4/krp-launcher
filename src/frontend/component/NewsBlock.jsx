@@ -46,11 +46,6 @@ export default (props) => {
   const content = props.content;
   const trueContent = content.replace('%date%', new Date(props.createdAt).toLocaleDateString("ru-RU"));
 
-
-
-
-  myUndefinedFunction();
-
   return (
     <NewsBlock>
       <div className="content">
