@@ -29,9 +29,14 @@
 import './index.css';
 // Add this to the end of the existing file
 import './frontend/app.jsx';
-
+import * as Sentry from "@sentry/electron";
 
 import { electronProxy } from './frontend/ipc.js'
 
 console.log('on ready web')
 electronProxy.ready();
+
+
+Sentry.init({
+    dsn: "https://ef3c1d6c02dad165010923eed3dc239d@o435989.ingest.sentry.io/4506796763316224",
+});

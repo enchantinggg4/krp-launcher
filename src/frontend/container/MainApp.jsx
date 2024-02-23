@@ -55,7 +55,7 @@ const Version = styled.div`
 
 const OnlineStatus = styled.div`
   position: absolute;
-  top: 40px;
+  top: 60px;
   right: 10px;
   color: #ddd;
   padding: 4px;
@@ -172,12 +172,12 @@ export const MainApp = observer(({ children }) => {
       <NotificationContainer />
       <BackgroundImage />
       <Version>{version}</Version>
-      {/* <OnlineStatus>
-        Онлайн: 111/111
-      </OnlineStatus> */}
+      <OnlineStatus>
+        {store.pinginfo && <>Онлайн: {store.pinginfo.online} / {store.pinginfo.max}</> || <>Пингую сервер...</>}
+      </OnlineStatus>
       <MainContent>
         <News>
-          {news.map(it => <NewsBlock key={it.id} content={it.content} title={it.title} image={it.image} />)}
+          {(news).map(it => <NewsBlock key={it.id} {...it} />)}
         </News>
         <CharacterPreview />
       </MainContent>

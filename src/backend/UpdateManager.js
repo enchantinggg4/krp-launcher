@@ -7,7 +7,10 @@ import { mainWindow, sendToWeb } from "../main"
 import { isContextRunning, useSingleContext } from "./helper"
 import log from 'electron-log'
 import ConfigManager from "./ConfigManager"
-import { UPDATER_URL } from "../frontend/config"
+import { GAMESERVER_IP, GAMESERVER_PORT, UPDATER_URL } from "../frontend/config"
+
+const mcping = require('mcping-js')
+
 class UpdateManager {
     APPDATA_DIR = '.kingdomrpg'
 
@@ -29,15 +32,36 @@ class UpdateManager {
         this.wrap = new WrapClient(this.getMinecraftPath(), this.getVersion(), this.getOs(), javaArgs);
         this.wrap.on('queue_state', msg => {
             sendToWeb('prepare_state', msg)
-        })
+        });
 
+        this.server = new mcping.MinecraftServer(GAMESERVER_IP, GAMESERVER_PORT);
+
+        this.ping();
         setInterval(async () => {
+            await this.ping();
             if (isContextRunning('prepare') || isContextRunning('play')) {
                 return;
             }
             await this.preparePatch()
 
         }, 10_000)
+    }
+
+    async ping() {
+
+
+        this.server.ping(2000, '760', (err, res) => {
+            if (!err) {
+                sendToWeb('gsping', {
+                    max: res.players.max,
+                    online: res.players.online,
+                })
+            }
+        })
+
+
+
+
     }
 
     getMinecraftPath() {
@@ -185,7 +209,7 @@ class UpdateManager {
                 sendToWeb('game_launching', false)
                 log.info('Re-opening launcher')
                 mainWindow?.show();
-                this.wrap.removeListener(listener);
+                this.wrap.removeListener("game-window-show", listener);
             })
         })
 

@@ -6,7 +6,7 @@ import * as path from "path"
 // import './backend/fetch-polyfill'
 
 import log from 'electron-log'
-
+import * as Sentry from "@sentry/electron";
 const isDev = require('electron-is-dev')
 
 export let mainWindow
@@ -158,6 +158,11 @@ if (handleSquirrelEvent()) {
   if (!gotTheLock) {
     app.quit()
   } else {
+
+    Sentry.init({
+      dsn: "https://ef3c1d6c02dad165010923eed3dc239d@o435989.ingest.sentry.io/4506796763316224",
+    });
+
     app.on('second-instance', (event, commandLine, workingDirectory, additionalData) => {
       // Print out data received from the second instance.
       console.log(additionalData)

@@ -38,6 +38,8 @@
     "style-loader": "^3.0.0"
   },
   "dependencies": {
+    "@sentry/electron": "^4.18.0",
+    "@sentry/webpack-plugin": "^2.14.2",
     "@wiicamp/react-minecraft-skin-viewer": "^1.0.6",
     "apisauce": "^3.0.1",
     "electron-fetch": "^1.9.1",
@@ -47,6 +49,7 @@
     "es6-promisify": "^7.0.0",
     "extract-zip": "^2.0.1",
     "flatmap": "^0.0.3",
+    "mcping-js": "^1.5.0",
     "minecraft-wrap-fabric": "^1.6.0",
     "mkdirp": "^3.0.1",
     "mobx": "^6.3.13",
@@ -55,6 +58,7 @@
     "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
     "react-notifications": "^1.7.4",
     "react-router-dom": "^6.21.1",
     "styled-components": "^6.1.6",

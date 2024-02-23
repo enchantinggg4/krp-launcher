@@ -12,6 +12,8 @@ class Store {
     isLaunching = false
 
 
+    pinginfo = undefined
+
 
 
     isInitialLoading = true
@@ -23,7 +25,8 @@ class Store {
             isLaunching: observable,
             isPrepared: observable,
             profile: observable,
-            isInitialLoading: observable
+            isInitialLoading: observable,
+            pinginfo: observable
         })
 
         window.Main.on('update_config', d => {
@@ -50,6 +53,10 @@ class Store {
         window.Main.on('is_prepared', d => {
             this.isPrepared = d;
         })
+
+        window.Main.on('gsping', d => {
+            this.pinginfo = d;
+        });
     }
 
     async handleProfile(profile) {

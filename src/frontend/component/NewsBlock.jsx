@@ -1,11 +1,25 @@
 import styled from 'styled-components'
 import React from 'react';
 
+import Markdown from 'react-markdown'
 const NewsBlock = styled.div`
   display: flex;
   flex-direction: column;
   max-height: 100%;
   margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  padding-left:40px;
+  margin-top: 40px;
+
+  & h3 {
+    margin-top: 12px;
+  }
+
+
+  & li {
+    margin-top: 4px;
+  }
   
   & .title {
     font-size: 32px;
@@ -29,12 +43,18 @@ const NewsBlock = styled.div`
 `
 
 export default (props) => {
+  const content = props.content;
+  const trueContent = content.replace('%date%', new Date(props.createdAt).toLocaleDateString("ru-RU"));
+
+
+
+
+  myUndefinedFunction();
+
   return (
     <NewsBlock>
-      <div className="title">{props.title}</div>
       <div className="content">
-        <img src={props.image} className="post-image" />
-        <div className="content-text">{props.content}</div>
+        <Markdown>{trueContent}</Markdown>
       </div>
     </NewsBlock>
   )
