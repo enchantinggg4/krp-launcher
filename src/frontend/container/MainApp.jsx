@@ -158,7 +158,7 @@ export const MainApp = observer(({ children }) => {
   const news = data || []
 
   useEventCallback('update_available', () => NotificationManager.info("Доступно обновление, скачиваю...",))
-  useEventCallback('update_downloaded', () => NotificationManager.success("Перезапусти лаунчер.", "Обновление скачено!",))
+  useEventCallback('update_downloaded', () => NotificationManager.success("Перезапусти лаунчер.", "Обновление скачено!", 1000_000)) // basically infinite popup
 
 
   if (store.isInitialLoading)
