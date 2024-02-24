@@ -47,18 +47,22 @@ export default class WrapClient extends EventEmitter {
         return new Promise((resolve, reject) => {
             var sp = spawn(path, ['-version']);
             sp.on('error', function (err) {
-                reject();
+                reject(err);
             })
             sp.stderr.on('data', function (data) {
-                data = data.toString().split('\n')[0];
-                var javaVersion = new RegExp('openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-                if (javaVersion != false) {
-                    // TODO: We have Java installed
-                    resolve(javaVersion);
-                } else {
-                    // TODO: No Java installed
-                    reject()
-                }
+                const lines = data.toString().split('\n');
+                for (let data of lines) {
+                    var javaVersion = new RegExp('openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                    if (javaVersion != false) {
+                        // TODO: We have Java installed
+                        resolve(javaVersion);
+                        return;
+                    }
+                };
+
+                // We haven't found 
+                // TODO: No Java installed
+                reject("Something wrong: did not found line with 'openjdk version'")
             });
         })
     }
@@ -72,8 +76,9 @@ export default class WrapClient extends EventEmitter {
         }
 
         return useSingleContext('prepareJvm', () => {
-            return this.javaversion().catch(() => {
-                log.info('No java found')
+            return this.javaversion().catch((e) => {
+                log.info('No java found, error below:')
+                log.info(e)
                 const path = this.launcher.mcPath + '/runtime/' + jvmLib.name
                 return this.launcher.downloadFile(jvmLib.url, path, jvmLib.size, jvmLib.sha1).then(() => {
                     log.info('JVM runtime downloaded')
@@ -83,7 +88,10 @@ export default class WrapClient extends EventEmitter {
                         dir: this.launcher.mcPath + '/runtime'
                     })
                 })
-            }).then(() => this.javaversion()).then(jversion => assert.strictEqual('17.0.3', jversion))
+            }).then(() => this.javaversion()).then(jversion => {
+                log.info("Installed java version(should match 17.0.3): " + jversion)
+                assert.strictEqual('17.0.3', jversion);
+            })
         })
     }
 
