@@ -48,11 +48,12 @@ export default class WrapClient extends EventEmitter {
             var sp = spawn(path, ['-version']);
             sp.on('error', function (err) {
                 reject(err);
-            })
+            });
+            let didResolve = false;
             sp.stderr.on('data', function (data) {
                 const lines = data.toString().split('\n');
-                for (let data of lines) {
-                    var javaVersion = new RegExp('openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                for (let d of lines) {
+                    var javaVersion = new RegExp('openjdk version').test(d) ? d.split(' ')[2].replace(/"/g, '') : false;
                     if (javaVersion != false) {
                         // TODO: We have Java installed
                         resolve(javaVersion);
@@ -62,7 +63,9 @@ export default class WrapClient extends EventEmitter {
 
                 // We haven't found 
                 // TODO: No Java installed
-                reject("Something wrong: did not found line with 'openjdk version'")
+
+                if (!didResolve)
+                    reject("Something wrong: did not found line with 'openjdk version'")
             });
         })
     }
