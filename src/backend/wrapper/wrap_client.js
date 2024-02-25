@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 import LauncherDownload from './launcher_download'
-import { spawn } from 'child_process'
+import { execFile, spawn } from 'child_process'
 import assert from 'assert'
 
 import extract from 'extract-zip'
@@ -45,15 +45,20 @@ export default class WrapClient extends EventEmitter {
     javaversion() {
         const path = this.javaPath()
         return new Promise((resolve, reject) => {
-            var sp = spawn(path, ['-version']);
-            sp.on('error', function (err) {
-                reject(err);
-            });
-            let didResolve = false;
-            sp.stderr.on('data', function (data) {
-                const lines = data.toString().split('\n');
-                for (let d of lines) {
-                    var javaVersion = new RegExp('openjdk version').test(d) ? d.split(' ')[2].replace(/"/g, '') : false;
+            execFile(path, ['-version'], function (err, stdout, stderr) {
+                console.log("ERR:", err);
+                console.log("STD:", stdout);
+                console.log("STDERR:", stderr);
+
+                if (err != null) {
+                    reject(err);
+                }
+
+
+
+                const lines = stderr.split("\n")
+                for (let data of lines) {
+                    var javaVersion = new RegExp('openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
                     if (javaVersion != false) {
                         // TODO: We have Java installed
                         resolve(javaVersion);
@@ -61,13 +66,12 @@ export default class WrapClient extends EventEmitter {
                     }
                 };
 
-                // We haven't found 
-                // TODO: No Java installed
 
-                if (!didResolve)
-                    reject("Something wrong: did not found line with 'openjdk version'")
-            });
-        })
+
+                reject("No java found")
+
+            })
+        });
     }
 
     prepareJVM() {
